@@ -18,6 +18,8 @@ const (
 	MULTIPLY
 	OPEN_PAREN
 	CLOSE_PAREN
+	INCREMENT
+	DECREMENT
 	tokenLimit // to loop over possible tokens
 )
 
@@ -97,11 +99,15 @@ func (token Token) toString() string {
 		return "("
 	case CLOSE_PAREN:
 		return ")"
+	case INCREMENT:
+		return "inc"
+	case DECREMENT:
+		return "dec"
 	default:
 		return ""
 	}
 }
 
-func (token Token) toRune() rune {
-	return []rune(token.toString())[0]
+func (token Token) toRunes() []rune {
+	return []rune(token.toString())
 }

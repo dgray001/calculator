@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0e: Integer add
+v0.0f: Tokenizer works with tokens of any length
 
 Plans:
  - v0.1: Basic Operations

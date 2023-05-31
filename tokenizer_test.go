@@ -12,12 +12,16 @@ func TestTokenize(t *testing.T) {
 	}{
 		{"unknown", []Token{}, "Unrecogized character: u"},
 		{"1 ! 3", []Token{ONE}, "Unrecogized character: !"},
+		{"in+", []Token{}, "Unrecogized character: +"},
+		{"decin", []Token{DECREMENT}, "Unfinished tokens at end of input"},
 		{"0", []Token{ZERO}, ""},
 		{"0 \t 5 \n 9", []Token{ZERO, FIVE, NINE}, ""},
 		{"+2", []Token{PLUS, TWO}, ""},
 		{"-4", []Token{MINUS, FOUR}, ""},
 		{"6*", []Token{SIX, MULTIPLY}, ""},
 		{") (", []Token{CLOSE_PAREN, OPEN_PAREN}, ""},
+		{"inc5-1", []Token{INCREMENT, FIVE, MINUS, ONE}, ""},
+		{"( dec( ) )", []Token{OPEN_PAREN, DECREMENT, OPEN_PAREN, CLOSE_PAREN, CLOSE_PAREN}, ""},
 	}
 	for _, tc := range testCases {
 		got, error := tokenize(tc.input)
