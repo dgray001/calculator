@@ -7,17 +7,18 @@ import (
 func TestTokenize(t *testing.T) {
 	testCases := []struct {
 		input         string
-		expected      Integer
+		expected      []Token
 		error_message string
 	}{
-		{"unknown", newInteger(), "Unrecogized character: u"},
-		{"1 ! 3", newInteger().addDigit(1), "Unrecogized character: !"},
-		{"0", newInteger().addDigit(0), ""},
-		{"0 \t 5 \n 9", newInteger().addDigit(0).addDigit(5).addDigit(9), ""},
+		{"unknown", []Token{}, "Unrecogized character: u"},
+		{"1 ! 3", []Token{ONE}, "Unrecogized character: !"},
+		{"0", []Token{ZERO}, ""},
+		{"0 \t 5 \n 9", []Token{ZERO, FIVE, NINE}, ""},
+		{"+2", []Token{PLUS, TWO}, ""},
 	}
 	for _, tc := range testCases {
 		got, error := tokenize(tc.input)
-		if !got.equals(tc.expected) {
+		if !arrayEquals(got, tc.expected) {
 			t.Errorf("For test case (%s, %d, %s), tokenize returned %d", tc.input, tc.expected, tc.error_message, got)
 		}
 		var error_message = ""

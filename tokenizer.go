@@ -6,9 +6,9 @@ import (
 )
 
 // Returns the parsed integer
-func tokenize(input string) (Integer, error) {
+func tokenize(input string) ([]Token, error) {
 	// initialize state
-	var return_int = newInteger()
+	var tokens = []Token{}
 
 	for _, rune := range input {
 		if unicode.IsSpace(rune) {
@@ -18,14 +18,14 @@ func tokenize(input string) (Integer, error) {
 		for token := Token(0); token < tokenLimit; token++ {
 			if token.toString() == string(rune) {
 				found_token = &token
-				return_int = return_int.addDigit(token.toInt())
+				tokens = append(tokens, token)
 				break
 			}
 		}
 		if found_token == nil {
-			return return_int, errors.New("Unrecogized character: " + string(rune))
+			return tokens, errors.New("Unrecogized character: " + string(rune))
 		}
 	}
 
-	return return_int, nil
+	return tokens, nil
 }

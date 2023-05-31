@@ -13,6 +13,7 @@ const (
 	SEVEN
 	EIGHT
 	NINE
+	PLUS
 	tokenLimit // to loop over possible tokens
 )
 
@@ -37,6 +38,8 @@ func (token Token) toInt() uint8 {
 	case EIGHT:
 		return 8
 	case NINE:
+		return 9
+	case PLUS:
 		return 9
 	default:
 		panic("Token is not an integer: " + token.toString())
@@ -65,6 +68,8 @@ func (token Token) toString() string {
 		return "8"
 	case NINE:
 		return "9"
+	case PLUS:
+		return "+"
 	default:
 		return ""
 	}
