@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0d: Integer construct
+v0.0e: Integer add
 
 Plans:
  - v0.1: Basic Operations

@@ -86,8 +86,9 @@ func (i Integer) add(j Integer) Integer {
 			j_v = j.digits[place]
 		}
 		var sum = i_v + j_v + remainder
-		return_integer.addDigit(sum % 10)
+		return_integer = return_integer.addDigit(sum % 10)
 		remainder = sum / 10
 	}
+	return_integer = return_integer.addDigit(remainder)
 	return return_integer.construct()
 }

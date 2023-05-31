@@ -26,44 +26,6 @@ func testEquals(t *testing.T) {
 	}
 }
 
-func TestAddDigit(t *testing.T) {
-	testCases := []struct {
-		starting Integer
-		input    uint8
-		expected Integer
-	}{
-		{Integer{}, 0, Integer{digits: []uint8{0}}},
-		{Integer{}, 4, Integer{digits: []uint8{4}}},
-		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{4, 2}}},
-		{Integer{digits: []uint8{8, 0}}, 0, Integer{digits: []uint8{8, 0, 0}}},
-	}
-	for _, tc := range testCases {
-		got := tc.starting.addDigit(tc.input)
-		if !got.equals(tc.expected) {
-			t.Errorf("For test case expecting %s after adding %d, got %s", tc.expected.toString(), tc.input, got.toString())
-		}
-	}
-}
-
-func TestAddDigitPanic(t *testing.T) {
-	testCases := []struct {
-		starting Integer
-		input    uint8
-	}{
-		{Integer{}, 11},
-		{Integer{constructed: true}, 2},
-	}
-	for _, tc := range testCases {
-		defer func() {
-			r := recover()
-			if r == nil {
-				t.Errorf("Test case adding %d to %s expecting panic did not panic", tc.input, tc.starting.toString())
-			}
-		}()
-		tc.starting.addDigit(tc.input)
-	}
-}
-
 func TestConstruct(t *testing.T) {
 	testCases := []struct {
 		i        Integer
@@ -103,6 +65,44 @@ func TestConstructPanic(t *testing.T) {
 	}
 }
 
+func TestAddDigit(t *testing.T) {
+	testCases := []struct {
+		starting Integer
+		input    uint8
+		expected Integer
+	}{
+		{Integer{}, 0, Integer{digits: []uint8{0}}},
+		{Integer{}, 4, Integer{digits: []uint8{4}}},
+		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{4, 2}}},
+		{Integer{digits: []uint8{8, 0}}, 0, Integer{digits: []uint8{8, 0, 0}}},
+	}
+	for _, tc := range testCases {
+		got := tc.starting.addDigit(tc.input)
+		if !got.equals(tc.expected) {
+			t.Errorf("For test case expecting %s after adding %d, got %s", tc.expected.toString(), tc.input, got.toString())
+		}
+	}
+}
+
+func TestAddDigitPanic(t *testing.T) {
+	testCases := []struct {
+		starting Integer
+		input    uint8
+	}{
+		{Integer{}, 11},
+		{Integer{constructed: true}, 2},
+	}
+	for _, tc := range testCases {
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Errorf("Test case adding %d to %s expecting panic did not panic", tc.input, tc.starting.toString())
+			}
+		}()
+		tc.starting.addDigit(tc.input)
+	}
+}
+
 func TestAdd(t *testing.T) {
 	testCases := []struct {
 		left     Integer
@@ -110,6 +110,31 @@ func TestAdd(t *testing.T) {
 		expected Integer
 	}{
 		{Integer{constructed: true}, Integer{constructed: true}, Integer{digits: []uint8{0}, constructed: true}},
+		{
+			Integer{digits: []uint8{1}, constructed: true},
+			Integer{digits: []uint8{2}, constructed: true},
+			Integer{digits: []uint8{3}, constructed: true},
+		},
+		{
+			Integer{digits: []uint8{1, 0}, constructed: true},
+			Integer{digits: []uint8{0}, constructed: true},
+			Integer{digits: []uint8{1}, constructed: true},
+		},
+		{
+			Integer{digits: []uint8{1, 1}, constructed: true},
+			Integer{digits: []uint8{0, 1}, constructed: true},
+			Integer{digits: []uint8{1, 2}, constructed: true},
+		},
+		{
+			Integer{digits: []uint8{9, 0}, constructed: true},
+			Integer{digits: []uint8{3}, constructed: true},
+			Integer{digits: []uint8{2, 1}, constructed: true},
+		},
+		{
+			Integer{digits: []uint8{9, 8}, constructed: true},
+			Integer{digits: []uint8{4, 2}, constructed: true},
+			Integer{digits: []uint8{3, 1, 1}, constructed: true},
+		},
 	}
 	for _, tc := range testCases {
 		var got = tc.left.add(tc.right)
