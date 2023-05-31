@@ -14,8 +14,29 @@ const (
 	EIGHT
 	NINE
 	PLUS
+	MINUS
+	MULTIPLY
+	OPEN_PAREN
+	CLOSE_PAREN
 	tokenLimit // to loop over possible tokens
 )
+
+func (token Token) isInt() bool {
+	switch token {
+	case ZERO:
+	case ONE:
+	case TWO:
+	case THREE:
+	case FOUR:
+	case FIVE:
+	case SIX:
+	case SEVEN:
+	case EIGHT:
+	case NINE:
+		return true
+	}
+	return false
+}
 
 func (token Token) toInt() uint8 {
 	switch token {
@@ -38,8 +59,6 @@ func (token Token) toInt() uint8 {
 	case EIGHT:
 		return 8
 	case NINE:
-		return 9
-	case PLUS:
 		return 9
 	default:
 		panic("Token is not an integer: " + token.toString())
@@ -70,7 +89,19 @@ func (token Token) toString() string {
 		return "9"
 	case PLUS:
 		return "+"
+	case MINUS:
+		return "-"
+	case MULTIPLY:
+		return "*"
+	case OPEN_PAREN:
+		return "("
+	case CLOSE_PAREN:
+		return ")"
 	default:
 		return ""
 	}
+}
+
+func (token Token) toRune() rune {
+	return []rune(token.toString())[0]
 }

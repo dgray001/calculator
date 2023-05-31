@@ -15,6 +15,9 @@ func TestTokenize(t *testing.T) {
 		{"0", []Token{ZERO}, ""},
 		{"0 \t 5 \n 9", []Token{ZERO, FIVE, NINE}, ""},
 		{"+2", []Token{PLUS, TWO}, ""},
+		{"-4", []Token{MINUS, FOUR}, ""},
+		{"6*", []Token{SIX, MULTIPLY}, ""},
+		{") (", []Token{CLOSE_PAREN, OPEN_PAREN}, ""},
 	}
 	for _, tc := range testCases {
 		got, error := tokenize(tc.input)

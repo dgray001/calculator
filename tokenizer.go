@@ -16,7 +16,7 @@ func tokenize(input string) ([]Token, error) {
 		}
 		var found_token *Token
 		for token := Token(0); token < tokenLimit; token++ {
-			if token.toString() == string(rune) {
+			if token.toRune() == rune {
 				found_token = &token
 				tokens = append(tokens, token)
 				break
