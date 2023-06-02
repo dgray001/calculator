@@ -14,5 +14,5 @@ func main() {
 		fmt.Println(parse_error)
 		return
 	}
-	fmt.Println("Node: ", ast.toString())
+	fmt.Println("Node: ", ast.toString(false))
 }

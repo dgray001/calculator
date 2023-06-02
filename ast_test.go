@@ -12,218 +12,133 @@ func TestAstNodeEquals(t *testing.T) {
 	}{
 		{AstNode{}, AstNode{}, true},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(INCREMENT, []Value{}, []Token{}, newInteger(), true, true),
+			constructAstNode(INCREMENT, []Value{}, []Token{}, newInteger(), true, true),
 			true,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger().addDigit(ONE.toInt(), false), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			true,
+		},
+		{
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			constructAstNode(INCREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
 			false,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: PLUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			constructAstNode(DECREMENT, []Value{intValue(newInteger())}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
 			false,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger().addDigit(ONE.toInt(), false), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE, THREE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
 			false,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: false,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false).construct(), true, true),
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false), true, true),
 			false,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: false, hasLeft: true, hasOperator: true, hasRight: true},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false), false, true),
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false), true, true),
 			false,
 		},
 		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: false, hasOperator: true, hasRight: true},
-			false,
-		},
-		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: false, hasRight: true},
-			false,
-		},
-		{
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
-			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
-				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: false},
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false), true, false),
+			constructAstNode(DECREMENT, []Value{}, []Token{FIVE}, newInteger().addDigit(THREE.toInt(), false), true, true),
 			false,
 		},
 	}
 	for _, tc := range testCases {
 		got := tc.left.equals(tc.right)
 		if got != tc.expected {
-			t.Errorf("For test case comparing %s to %s, got %t", tc.left.toString(), tc.right.toString(), got)
+			t.Errorf("For test case comparing %s to %s, got %t", tc.left.toString(true), tc.right.toString(true), got)
 		}
 	}
 }
 
 func TestAddToken(t *testing.T) {
+	var new_integer Integer
+	var added_integer Integer
 	testCases := []struct {
 		start       AstNode
 		token       Token
 		expectError bool
 		expected    AstNode
 	}{
-		// non-error int cases
+		// int tokens
 		{
-			AstNode{},
+			AstNode{lastAddedValue: true},
+			ONE,
+			true,
+			AstNode{lastAddedValue: true},
+		},
+		{
+			AstNode{constructingInt: &new_integer},
 			TWO,
 			false,
-			AstNode{constructingLeftInt: true, left: newInteger().addDigit(TWO.toInt(), false)},
+			AstNode{constructingInt: &added_integer},
 		},
-		{
-			AstNode{constructingLeftInt: true, left: newInteger().addDigit(ONE.toInt(), false)},
-			THREE,
-			false,
-			AstNode{constructingLeftInt: true,
-				left: newInteger().addDigit(ONE.toInt(), false).addDigit(THREE.toInt(), false)},
-		},
-		{
-			AstNode{hasOperator: true},
-			FOUR,
-			false,
-			AstNode{hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(FOUR.toInt(), false)},
-		},
-		{
-			AstNode{hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(ONE.toInt(), false)},
-			FIVE,
-			false,
-			AstNode{hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(ONE.toInt(), false).addDigit(FIVE.toInt(), false)},
-		},
-		{
-			AstNode{hasLeft: true, hasOperator: true},
-			SIX,
-			false,
-			AstNode{hasLeft: true, hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(SIX.toInt(), false)},
-		},
-		{
-			AstNode{hasLeft: true, hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(ZERO.toInt(), false)},
-			SEVEN,
-			false,
-			AstNode{hasLeft: true, hasOperator: true, constructingRightInt: true,
-				right: newInteger().addDigit(ZERO.toInt(), false).addDigit(SEVEN.toInt(), false)},
-		},
-		// error int cases
-		{
-			AstNode{hasLeft: true, constructingLeftInt: true},
-			ONE,
-			true,
-			AstNode{hasLeft: true, constructingLeftInt: true},
-		},
-		{
-			AstNode{hasLeft: true, hasRight: true},
-			ONE,
-			true,
-			AstNode{hasLeft: true, hasRight: true},
-		},
-		{
-			AstNode{hasLeft: true, hasOperator: false},
-			ONE,
-			true,
-			AstNode{hasLeft: true, hasOperator: false},
-		},
-		{
-			AstNode{hasOperator: true, constructingLeftInt: true},
-			ONE,
-			true,
-			AstNode{hasOperator: true, constructingLeftInt: true},
-		},
-		{
-			AstNode{hasOperator: true, hasRight: true},
-			ONE,
-			true,
-			AstNode{hasOperator: true, hasRight: true},
-		},
-		{
-			AstNode{hasRight: true},
-			ONE,
-			true,
-			AstNode{hasRight: true},
-		},
-		{
-			AstNode{constructingRightInt: true},
-			ONE,
-			true,
-			AstNode{constructingRightInt: true},
-		},
-		// non error add operator cases
 		{
 			AstNode{},
-			PLUS,
+			THREE,
 			false,
-			AstNode{hasOperator: true, operator: PLUS},
+			AstNode{constructingInt: &added_integer},
 		},
 		{
-			AstNode{hasLeft: true},
-			PLUS,
+			AstNode{lastAddedOperator: true},
+			FOUR,
 			false,
-			AstNode{hasLeft: true, hasOperator: true, operator: PLUS},
+			AstNode{lastAddedOperator: true, constructingInt: &added_integer},
 		},
 		{
-			AstNode{constructingLeftInt: true, left: newInteger().addDigit(TWO.toInt(), false)},
-			PLUS,
+			AstNode{lastAddedOperator: true},
+			MINUS,
+			true,
+			AstNode{lastAddedOperator: true},
+		},
+		{
+			AstNode{},
+			MINUS,
 			false,
-			AstNode{hasLeft: true, left: newInteger().addDigit(TWO.toInt(), false).construct(), hasOperator: true, operator: PLUS},
-		},
-		// error add operator cases
-		{
-			AstNode{hasOperator: true},
-			PLUS,
-			true,
-			AstNode{hasOperator: true},
+			AstNode{lastAddedOperator: true, operators: []Token{MINUS}},
 		},
 		{
-			AstNode{hasRight: true},
-			PLUS,
-			true,
-			AstNode{hasRight: true},
+			AstNode{lastAddedValue: true},
+			MINUS,
+			false,
+			AstNode{lastAddedOperator: true, operators: []Token{MINUS}},
 		},
 		{
-			AstNode{constructingRightInt: true},
-			PLUS,
+			AstNode{constructingInt: &added_integer},
+			MINUS,
+			false,
+			AstNode{lastAddedOperator: true, values: []Value{intValue(newInteger().addDigit(FIVE.toInt(), false).construct())}, operators: []Token{MINUS}},
+		},
+		{
+			AstNode{},
+			CLOSE_PAREN,
 			true,
-			AstNode{constructingRightInt: true},
+			AstNode{},
 		},
 	}
 	for _, tc := range testCases {
+		new_integer = newInteger()
+		if tc.token.isInt() {
+			added_integer = newInteger().addDigit(tc.token.toInt(), false)
+		} else {
+			added_integer = newInteger().addDigit(FIVE.toInt(), false)
+		}
 		got := tc.start.addToken(tc.token)
 		if (got != nil) != tc.expectError {
 			t.Errorf("For test case adding token %s to %s, got error %s but expected %t",
-				tc.token.toString(), tc.start.toString(), got.Error(), tc.expectError)
+				tc.token.toString(), tc.start.toString(true), got.Error(), tc.expectError)
 		} else if !tc.start.equals(tc.expected) {
 			t.Errorf("For test case adding token %s, got %s but expected %s",
-				tc.token.toString(), tc.start.toString(), tc.expected.toString())
+				tc.token.toString(), tc.start.toString(false), tc.expected.toString(false))
 		}
 	}
 }

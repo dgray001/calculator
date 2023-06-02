@@ -24,7 +24,8 @@ func (i Integer) toString() string {
 	return return_string
 }
 
-func (left Integer) equals(right Integer) bool {
+func (left Integer) equals(untyped interface{}) bool {
+	var right = untyped.(Integer)
 	if left.constructed != right.constructed {
 		return false
 	}

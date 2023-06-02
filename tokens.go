@@ -20,9 +20,11 @@ const (
 	MINUS
 	MULTIPLY
 
-	// other
+	// parentheses
 	OPEN_PAREN
 	CLOSE_PAREN
+	OPEN_BRACKET
+	CLOSE_BRACKET
 
 	// functions
 	INCREMENT
@@ -31,6 +33,11 @@ const (
 	// to loop over possible tokens
 	tokenLimit
 )
+
+func (i Token) equals(untyped interface{}) bool {
+	var j = untyped.(Token)
+	return i == j
+}
 
 func (token Token) isInt() bool {
 	if token >= ZERO && token <= NINE {
@@ -41,6 +48,27 @@ func (token Token) isInt() bool {
 
 func (token Token) isOperator() bool {
 	if token >= PLUS && token <= MULTIPLY {
+		return true
+	}
+	return false
+}
+
+func (token Token) isParentheses() bool {
+	if token >= OPEN_PAREN && token <= CLOSE_BRACKET {
+		return true
+	}
+	return false
+}
+
+func (token Token) isLeftParens() bool {
+	if token == OPEN_PAREN || token == OPEN_BRACKET {
+		return true
+	}
+	return false
+}
+
+func (token Token) isRightParens() bool {
+	if token == CLOSE_PAREN || token == CLOSE_BRACKET {
 		return true
 	}
 	return false
@@ -112,6 +140,10 @@ func (token Token) toString() string {
 		return "("
 	case CLOSE_PAREN:
 		return ")"
+	case OPEN_BRACKET:
+		return "["
+	case CLOSE_BRACKET:
+		return "]"
 	case INCREMENT:
 		return "inc"
 	case DECREMENT:
