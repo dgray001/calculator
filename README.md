@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0f: Tokenizer works with tokens of any length
+v0.0g: Can add int token to AstNode
 
 Plans:
  - v0.1: Basic Operations

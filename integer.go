@@ -39,14 +39,18 @@ func (left Integer) equals(right Integer) bool {
 	return true
 }
 
-func (i Integer) addDigit(digit uint8) Integer {
+func (i Integer) addDigit(digit uint8, add_to_end bool) Integer {
 	if i.constructed {
 		panic("Cannot add digit when integer is constructed")
 	}
 	if digit > 9 {
 		panic("Cannot add " + strconv.FormatInt(int64(digit), 10) + " since it is > 9")
 	}
-	i.digits = append(i.digits, digit)
+	if add_to_end {
+		i.digits = append(i.digits, digit)
+	} else {
+		i.digits = append([]uint8{digit}, i.digits...)
+	}
 	return i
 }
 
@@ -86,9 +90,9 @@ func (i Integer) add(j Integer) Integer {
 			j_v = j.digits[place]
 		}
 		var sum = i_v + j_v + remainder
-		return_integer = return_integer.addDigit(sum % 10)
+		return_integer = return_integer.addDigit(sum%10, true)
 		remainder = sum / 10
 	}
-	return_integer = return_integer.addDigit(remainder)
+	return_integer = return_integer.addDigit(remainder, true)
 	return return_integer.construct()
 }

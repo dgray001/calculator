@@ -3,6 +3,7 @@ package main
 type Token int8
 
 const (
+	// ints
 	ZERO Token = iota
 	ONE
 	TWO
@@ -13,28 +14,40 @@ const (
 	SEVEN
 	EIGHT
 	NINE
+
+	// operators
 	PLUS
 	MINUS
 	MULTIPLY
+
+	// other
 	OPEN_PAREN
 	CLOSE_PAREN
+
+	// functions
 	INCREMENT
 	DECREMENT
-	tokenLimit // to loop over possible tokens
+
+	// to loop over possible tokens
+	tokenLimit
 )
 
 func (token Token) isInt() bool {
-	switch token {
-	case ZERO:
-	case ONE:
-	case TWO:
-	case THREE:
-	case FOUR:
-	case FIVE:
-	case SIX:
-	case SEVEN:
-	case EIGHT:
-	case NINE:
+	if token >= ZERO && token <= NINE {
+		return true
+	}
+	return false
+}
+
+func (token Token) isOperator() bool {
+	if token >= PLUS && token <= MULTIPLY {
+		return true
+	}
+	return false
+}
+
+func (token Token) isFunction() bool {
+	if token >= INCREMENT && token <= DECREMENT {
 		return true
 	}
 	return false

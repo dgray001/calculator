@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func testEquals(t *testing.T) {
+func TestEquals(t *testing.T) {
 	testCases := []struct {
 		left     Integer
 		right    Integer
@@ -12,7 +12,7 @@ func testEquals(t *testing.T) {
 	}{
 		{Integer{digits: []uint8{}}, Integer{digits: []uint8{}}, true},
 		{Integer{digits: []uint8{1, 2}}, Integer{digits: []uint8{1, 2}}, true},
-		{Integer{digits: []uint8{4, 6, 9}}, Integer{digits: []uint8{5, 6, 9}}, true},
+		{Integer{digits: []uint8{4, 6, 9}}, Integer{digits: []uint8{4, 6, 9}}, true},
 		{Integer{digits: []uint8{}}, Integer{digits: []uint8{0}}, false},
 		{Integer{digits: []uint8{4, 9}}, Integer{digits: []uint8{7}}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{0, 7}}, false},
@@ -73,11 +73,11 @@ func TestAddDigit(t *testing.T) {
 	}{
 		{Integer{}, 0, Integer{digits: []uint8{0}}},
 		{Integer{}, 4, Integer{digits: []uint8{4}}},
-		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{4, 2}}},
-		{Integer{digits: []uint8{8, 0}}, 0, Integer{digits: []uint8{8, 0, 0}}},
+		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{2, 4}}},
+		{Integer{digits: []uint8{8, 0}}, 0, Integer{digits: []uint8{0, 8, 0}}},
 	}
 	for _, tc := range testCases {
-		got := tc.starting.addDigit(tc.input)
+		got := tc.starting.addDigit(tc.input, false)
 		if !got.equals(tc.expected) {
 			t.Errorf("For test case expecting %s after adding %d, got %s", tc.expected.toString(), tc.input, got.toString())
 		}
@@ -99,7 +99,7 @@ func TestAddDigitPanic(t *testing.T) {
 				t.Errorf("Test case adding %d to %s expecting panic did not panic", tc.input, tc.starting.toString())
 			}
 		}()
-		tc.starting.addDigit(tc.input)
+		tc.starting.addDigit(tc.input, false)
 	}
 }
 
