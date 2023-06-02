@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0g: Can add int token to AstNode
+v0.0h: Add operator to AstNode
 
 Plans:
  - v0.1: Basic Operations

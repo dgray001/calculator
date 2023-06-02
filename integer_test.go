@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-func TestEquals(t *testing.T) {
+func TestIntegerEquals(t *testing.T) {
 	testCases := []struct {
 		left     Integer
 		right    Integer

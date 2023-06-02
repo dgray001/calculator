@@ -100,6 +100,8 @@ func (node *AstNode) addToken(token Token) error {
 		} else {
 			if node.constructingRightInt {
 				return errors.New("Can't be constructing right int without operator or left int")
+			} else if node.hasRight {
+				return errors.New("Can't have right int without having an operator")
 			} else if node.constructingLeftInt {
 				node.left = node.left.addDigit(token.toInt(), false)
 			} else {
@@ -107,8 +109,24 @@ func (node *AstNode) addToken(token Token) error {
 				node.left = newInteger().addDigit(token.toInt(), false)
 			}
 		}
+	} else if token.isOperator() {
+		if node.hasOperator {
+			return errors.New("Can't add operator if node already has operator")
+		} else if node.hasRight {
+			return errors.New("Can't add operator if node already has right int")
+		} else if node.constructingRightInt {
+			return errors.New("Can't add operator while constructing right int")
+		} else {
+			node.operator = token
+			node.hasOperator = true
+			if node.constructingLeftInt {
+				node.left = node.left.construct()
+				node.hasLeft = true
+				node.constructingLeftInt = false
+			}
+		}
 	} else {
-		return errors.New("Only ints implemented so far")
+		return errors.New("Only ints and operators implemented so far")
 	}
 	return nil
 }

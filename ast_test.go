@@ -4,6 +4,85 @@ import (
 	"testing"
 )
 
+func TestAstNodeEquals(t *testing.T) {
+	testCases := []struct {
+		left     AstNode
+		right    AstNode
+		expected bool
+	}{
+		{AstNode{}, AstNode{}, true},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			true,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger().addDigit(ONE.toInt(), false), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: PLUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger().addDigit(ONE.toInt(), false), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: false,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: false, hasLeft: true, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: false, hasOperator: true, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: false, hasRight: true},
+			false,
+		},
+		{
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: true},
+			AstNode{left: newInteger(), operator: MINUS, right: newInteger(), constructingLeftInt: true,
+				constructingRightInt: true, hasLeft: true, hasOperator: true, hasRight: false},
+			false,
+		},
+	}
+	for _, tc := range testCases {
+		got := tc.left.equals(tc.right)
+		if got != tc.expected {
+			t.Errorf("For test case comparing %s to %s, got %t", tc.left.toString(), tc.right.toString(), got)
+		}
+	}
+}
+
 func TestAddToken(t *testing.T) {
 	testCases := []struct {
 		start       AstNode
@@ -11,7 +90,7 @@ func TestAddToken(t *testing.T) {
 		expectError bool
 		expected    AstNode
 	}{
-		// non-error cases
+		// non-error int cases
 		{
 			AstNode{},
 			TWO,
@@ -55,7 +134,7 @@ func TestAddToken(t *testing.T) {
 			AstNode{hasLeft: true, hasOperator: true, constructingRightInt: true,
 				right: newInteger().addDigit(ZERO.toInt(), false).addDigit(SEVEN.toInt(), false)},
 		},
-		// error cases
+		// error int cases
 		{
 			AstNode{hasLeft: true, constructingLeftInt: true},
 			ONE,
@@ -87,12 +166,55 @@ func TestAddToken(t *testing.T) {
 			AstNode{hasOperator: true, hasRight: true},
 		},
 		{
+			AstNode{hasRight: true},
+			ONE,
+			true,
+			AstNode{hasRight: true},
+		},
+		{
 			AstNode{constructingRightInt: true},
 			ONE,
 			true,
 			AstNode{constructingRightInt: true},
 		},
-		// TODO: Change when rest is implemented
+		// non error add operator cases
+		{
+			AstNode{},
+			PLUS,
+			false,
+			AstNode{hasOperator: true, operator: PLUS},
+		},
+		{
+			AstNode{hasLeft: true},
+			PLUS,
+			false,
+			AstNode{hasLeft: true, hasOperator: true, operator: PLUS},
+		},
+		{
+			AstNode{constructingLeftInt: true, left: newInteger().addDigit(TWO.toInt(), false)},
+			PLUS,
+			false,
+			AstNode{hasLeft: true, left: newInteger().addDigit(TWO.toInt(), false).construct(), hasOperator: true, operator: PLUS},
+		},
+		// error add operator cases
+		{
+			AstNode{hasOperator: true},
+			PLUS,
+			true,
+			AstNode{hasOperator: true},
+		},
+		{
+			AstNode{hasRight: true},
+			PLUS,
+			true,
+			AstNode{hasRight: true},
+		},
+		{
+			AstNode{constructingRightInt: true},
+			PLUS,
+			true,
+			AstNode{constructingRightInt: true},
+		},
 	}
 	for _, tc := range testCases {
 		got := tc.start.addToken(tc.token)
