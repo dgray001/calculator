@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0j: Made parser
+v0.0k: Initial evaluator
 
 Plans:
  - v0.1: Basic Operations

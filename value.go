@@ -7,7 +7,8 @@ import (
 type ValueType int8
 
 const (
-	INTEGER ValueType = iota
+	ERROR ValueType = iota
+	INTEGER
 	AST_NODE
 )
 
@@ -53,6 +54,8 @@ func (i Value) equals(untyped interface{}) bool {
 		return false
 	}
 	switch i.value_type {
+	case ERROR:
+		return true
 	case INTEGER:
 		return i.integer.equals(*j.integer)
 	case AST_NODE:
