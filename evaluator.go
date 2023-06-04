@@ -8,24 +8,45 @@ func (node *AstNode) evaluate() (Value, error) {
 	}
 	// pass for recursive evaluation
 	for _, value := range node.values {
-		value.evaluate()
+		var _, evaluate_error = value.evaluate()
+		if evaluate_error != nil {
+			return Value{}, evaluate_error
+		}
+		// TODO: Replace value with returned value
 	}
+	var pass_error error = nil
 	// pass for exponentiation
 	// pass for multiplication
-	node.evaluatePass(MULTIPLY, MULTIPLY)
+	pass_error = node.evaluatePass(MULTIPLY, MULTIPLY)
+	if pass_error != nil {
+		return Value{}, pass_error
+	}
 	// pass for addition
-	node.evaluatePass(PLUS, MINUS)
+	pass_error = node.evaluatePass(PLUS, MINUS)
+	if pass_error != nil {
+		return Value{}, pass_error
+	}
 	return node.values[0], nil
 }
 
-func (node *AstNode) evaluatePass(start Token, end Token) {
+func (node *AstNode) evaluatePass(start Token, end Token) error {
 	for i, operator := range node.operators {
 		if operator >= start && operator <= end {
 			// check for unary operator
 			if i == 0 && len(node.operators) == len(node.values) {
+				if !operator.isUnaryOperator() {
+					return errors.New("Non unary operator in a unary operator position")
+				}
+				var result, unary_error = unaryOperation(operator, node.values[i])
+				if unary_error != nil {
+					return unary_error
+				}
+				node.values[i] = result
 			}
+			// TODO: Evaluate binary operator
 		}
 	}
+	return nil
 }
 
 func (value *Value) evaluate() (Value, error) {

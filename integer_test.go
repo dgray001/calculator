@@ -17,6 +17,8 @@ func TestIntegerEquals(t *testing.T) {
 		{Integer{digits: []uint8{4, 9}}, Integer{digits: []uint8{7}}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{0, 7}}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{2}}, false},
+		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7}, constructed: true}, false},
+		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7}, int_sign: true}, false},
 	}
 	for _, tc := range testCases {
 		got := tc.left.equals(tc.right)

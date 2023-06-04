@@ -53,6 +53,17 @@ func (token Token) isOperator() bool {
 	return false
 }
 
+func (token Token) isUnaryOperator() bool {
+	switch token {
+	case PLUS:
+		return true
+	case MINUS:
+		return true
+	default:
+		return false
+	}
+}
+
 func (token Token) isParentheses() bool {
 	if token >= OPEN_PAREN && token <= CLOSE_BRACKET {
 		return true

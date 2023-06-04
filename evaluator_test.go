@@ -15,6 +15,16 @@ func TestEvaluate(t *testing.T) {
 			"Can't evaluate node without values",
 			Value{},
 		},
+		{
+			AstNode{values: []Value{intValue(newInteger().addDigit(TWO.toInt(), false).construct())}, operators: []Token{PLUS}},
+			"",
+			Value{value_type: INTEGER, integer: &Integer{digits: []uint8{2}, constructed: true, int_sign: true}},
+		},
+		{
+			AstNode{values: []Value{intValue(newInteger().addDigit(TWO.toInt(), false).construct())}, operators: []Token{MINUS}},
+			"",
+			Value{value_type: INTEGER, integer: &Integer{digits: []uint8{2}, constructed: true, int_sign: false}},
+		},
 	}
 	for _, tc := range testCases {
 		var value, err = tc.root_node.evaluate()

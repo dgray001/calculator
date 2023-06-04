@@ -5,12 +5,14 @@ import (
 )
 
 type Integer struct {
+	int_sign    bool
 	digits      []uint8
 	constructed bool
 }
 
 func newInteger() Integer {
 	return Integer{
+		int_sign:    true,
 		digits:      []uint8{},
 		constructed: false,
 	}
@@ -21,11 +23,17 @@ func (i Integer) toString() string {
 	for _, digit := range i.digits {
 		return_string = strconv.FormatInt(int64(digit), 10) + return_string
 	}
+	if !i.int_sign && return_string != "0" {
+		return_string = "-" + return_string
+	}
 	return return_string
 }
 
 func (left Integer) equals(untyped interface{}) bool {
 	var right = untyped.(Integer)
+	if left.int_sign != right.int_sign {
+		return false
+	}
 	if left.constructed != right.constructed {
 		return false
 	}
@@ -72,6 +80,11 @@ func (i Integer) construct() Integer {
 	if len(i.digits) == 0 {
 		i.digits = append(i.digits, 0)
 	}
+	return i
+}
+
+func (i Integer) invert() Integer {
+	i.int_sign = !i.int_sign
 	return i
 }
 
