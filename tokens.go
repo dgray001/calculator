@@ -60,14 +60,14 @@ func (token Token) isParentheses() bool {
 	return false
 }
 
-func (token Token) isLeftParens() bool {
+func (token Token) isOpenParens() bool {
 	if token == OPEN_PAREN || token == OPEN_BRACKET {
 		return true
 	}
 	return false
 }
 
-func (token Token) isRightParens() bool {
+func (token Token) isCloseParens() bool {
 	if token == CLOSE_PAREN || token == CLOSE_BRACKET {
 		return true
 	}

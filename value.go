@@ -39,6 +39,14 @@ func intValue(integer Integer) Value {
 	}
 }
 
+func nodeValue(node AstNode) Value {
+	return Value{
+		value_type: AST_NODE,
+		integer:    nil,
+		ast_node:   &node,
+	}
+}
+
 func (i Value) equals(untyped interface{}) bool {
 	var j = untyped.(Value)
 	if i.value_type != j.value_type {

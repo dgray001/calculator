@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"strconv"
 	"strings"
 )
 
@@ -11,7 +12,9 @@ type AstNode struct {
 	values    []Value
 	operators []Token
 
-	constructingInt   *Integer
+	constructingInt  *Integer
+	constructingNode *AstNode
+
 	lastAddedValue    bool
 	lastAddedOperator bool
 }
@@ -22,17 +25,19 @@ func newAstNode() AstNode {
 		values:            make([]Value, 0),
 		operators:         make([]Token, 0),
 		constructingInt:   nil,
+		constructingNode:  nil,
 		lastAddedValue:    false,
 		lastAddedOperator: false,
 	}
 }
 
-func constructAstNode(fn Token, vs []Value, os []Token, in Integer, lastV bool, lastO bool) AstNode {
+func constructAstNode(fn Token, vs []Value, os []Token, in Integer, an AstNode, lastV bool, lastO bool) AstNode {
 	return AstNode{
 		function:          &fn,
 		values:            vs,
 		operators:         os,
 		constructingInt:   &in,
+		constructingNode:  &an,
 		lastAddedValue:    lastV,
 		lastAddedOperator: lastO,
 	}
@@ -68,6 +73,45 @@ func (node AstNode) toString(shallow bool) string {
 	return return_string.String()
 }
 
+func (node AstNode) toDebugString(append_string string) string {
+	var return_string strings.Builder
+	return_string.WriteString("AstNode {")
+	if node.function != nil {
+		return_string.WriteString("\n" + append_string + "function: " + node.function.toString())
+	}
+	return_string.WriteString("\n" + append_string + "values: [")
+	var first = true
+	for _, value := range node.values {
+		if !first {
+			return_string.WriteString(", ")
+		}
+		first = false
+		return_string.WriteString(value.toString(false))
+	}
+	return_string.WriteString("]")
+	return_string.WriteString("\n" + append_string + "operators: [")
+	first = true
+	for _, operator := range node.operators {
+		if !first {
+			return_string.WriteString(", ")
+		}
+		first = false
+		return_string.WriteString(operator.toString())
+	}
+	return_string.WriteString("]")
+	if node.constructingInt != nil {
+		return_string.WriteString("\n" + append_string + "constructingInt: " + node.constructingInt.toString())
+	}
+	if node.constructingNode != nil {
+		return_string.WriteString("\n" + append_string + "constructingNode: " +
+			node.constructingNode.toDebugString(append_string+"  "))
+	}
+	return_string.WriteString("\n" + append_string + "lastAddedValue: " + strconv.FormatBool(node.lastAddedValue))
+	return_string.WriteString("\n" + append_string + "lastAddedOperator: " + strconv.FormatBool(node.lastAddedOperator))
+	return_string.WriteString("\n" + append_string + "}")
+	return return_string.String()
+}
+
 func (i AstNode) equals(untyped interface{}) bool {
 	var j = untyped.(AstNode)
 	if (i.function != nil || j.function != nil) && *i.function != *j.function {
@@ -86,6 +130,13 @@ func (i AstNode) equals(untyped interface{}) bool {
 	} else if i.constructingInt != nil || j.constructingInt != nil {
 		return false
 	}
+	if i.constructingNode != nil && j.constructingNode != nil {
+		if !i.constructingNode.equals(*j.constructingNode) {
+			return false
+		}
+	} else if i.constructingNode != nil || j.constructingNode != nil {
+		return false
+	}
 	if i.lastAddedValue != j.lastAddedValue {
 		return false
 	}
@@ -95,8 +146,23 @@ func (i AstNode) equals(untyped interface{}) bool {
 	return true
 }
 
-// Used by the parser
+// Recursive token adder used by the parser
 func (node *AstNode) addToken(token Token) error {
+	if node.constructingNode != nil {
+		if token.isCloseParens() && node.constructingNode.constructingNode == nil {
+			var error = node.constructingNode.endTokens()
+			if error != nil {
+				return error
+			}
+			node.values = append(node.values, nodeValue(*node.constructingNode))
+			node.constructingNode = nil
+			node.lastAddedValue = true
+			node.lastAddedOperator = false
+			return nil
+		} else {
+			return node.constructingNode.addToken(token)
+		}
+	}
 	if token.isInt() {
 		if node.lastAddedValue {
 			return errors.New("Can't add two values in a row")
@@ -108,7 +174,7 @@ func (node *AstNode) addToken(token Token) error {
 			node.constructingInt = &new_integer
 		}
 	} else if token.isOperator() {
-		if node.lastAddedOperator {
+		if node.lastAddedOperator && node.constructingInt == nil {
 			return errors.New("Can't add two operators in a row")
 		} else {
 			node.operators = append(node.operators, token)
@@ -120,18 +186,33 @@ func (node *AstNode) addToken(token Token) error {
 				node.constructingInt = nil
 			}
 		}
+	} else if token.isOpenParens() {
+		if node.lastAddedValue {
+			return errors.New("Can't add two values in a row")
+		} else {
+			var new_node = newAstNode()
+			node.constructingNode = &new_node
+		}
+	} else if token.isCloseParens() {
+		return errors.New("Can't end parentheses if not constructing a node")
+	} else if token.isFunction() {
+		return errors.New("Functions not implemented yet")
 	} else {
-		return errors.New("Only ints and operators implemented so far")
+		return errors.New("Unrecognized token type")
 	}
 	return nil
 }
 
 func (node *AstNode) endTokens() error {
+	if node.constructingNode != nil {
+		return errors.New("Can't end node while constructing node")
+	}
 	if node.constructingInt != nil {
 		var new_integer = node.constructingInt.construct()
 		node.values = append(node.values, intValue(new_integer))
 		node.lastAddedValue = true
 		node.lastAddedOperator = false
+		node.constructingInt = nil
 	}
 	if node.lastAddedOperator {
 		return errors.New("Can't end node on an operator")
