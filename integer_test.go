@@ -111,31 +111,39 @@ func TestAdd(t *testing.T) {
 		right    Integer
 		expected Integer
 	}{
-		{Integer{constructed: true}, Integer{constructed: true}, Integer{digits: []uint8{0}, constructed: true}},
 		{
-			Integer{digits: []uint8{1}, constructed: true},
-			Integer{digits: []uint8{2}, constructed: true},
-			Integer{digits: []uint8{3}, constructed: true},
+			Integer{constructed: true},
+			Integer{constructed: true},
+			Integer{digits: []uint8{0}, constructed: true, int_sign: true}},
+		{
+			Integer{digits: []uint8{1}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{2}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{3}, constructed: true, int_sign: true},
 		},
 		{
-			Integer{digits: []uint8{1, 0}, constructed: true},
-			Integer{digits: []uint8{0}, constructed: true},
-			Integer{digits: []uint8{1}, constructed: true},
+			Integer{digits: []uint8{1, 0}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{0}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{1}, constructed: true, int_sign: true},
 		},
 		{
-			Integer{digits: []uint8{1, 1}, constructed: true},
-			Integer{digits: []uint8{0, 1}, constructed: true},
-			Integer{digits: []uint8{1, 2}, constructed: true},
+			Integer{digits: []uint8{1, 3}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{0, 1}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{1, 2}, constructed: true, int_sign: true},
 		},
 		{
-			Integer{digits: []uint8{9, 0}, constructed: true},
-			Integer{digits: []uint8{3}, constructed: true},
-			Integer{digits: []uint8{2, 1}, constructed: true},
+			Integer{digits: []uint8{4, 3}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{3, 0}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{1, 3}, constructed: true, int_sign: false},
 		},
 		{
-			Integer{digits: []uint8{9, 8}, constructed: true},
-			Integer{digits: []uint8{4, 2}, constructed: true},
-			Integer{digits: []uint8{3, 1, 1}, constructed: true},
+			Integer{digits: []uint8{9, 8}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{4, 2}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{3, 1, 1}, constructed: true, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{9, 8}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{4, 2}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{3, 1, 1}, constructed: true, int_sign: false},
 		},
 	}
 	for _, tc := range testCases {

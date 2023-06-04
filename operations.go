@@ -2,8 +2,13 @@ package main
 
 func unaryOperation(operator Token, value Value) (Value, error) {
 	switch operator {
-	case PLUS: // doesn't actually do anything
-		return value, nil
+	case PLUS:
+		switch value.value_type {
+		case INTEGER:
+			return value, nil
+		default:
+			panic("Invalid value type for unary plus operation: " + value.value_type.toString())
+		}
 	case MINUS:
 		switch value.value_type {
 		case INTEGER:
@@ -13,5 +18,21 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 		}
 	default:
 		panic("Invalid unary operator: " + operator.toString())
+	}
+}
+
+func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) {
+	switch operator {
+	case PLUS:
+		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
+			panic("Cannot add node value types")
+		}
+		return intValue(value1.integer.add(*value2.integer)), nil
+	case MINUS:
+		panic("Not implemented")
+	case MULTIPLY:
+		panic("Not implemented")
+	default:
+		panic("Invalid binary operator: " + operator.toString())
 	}
 }

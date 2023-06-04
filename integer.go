@@ -92,7 +92,7 @@ func (i Integer) add(j Integer) Integer {
 	if !i.constructed || !j.constructed {
 		panic("Cannot add unconstructed integers")
 	}
-	var return_integer = Integer{}
+	var return_integer = newInteger()
 	var remainder uint8 = 0
 	for place := 0; place < len(i.digits) || place < len(j.digits); place++ {
 		var i_v uint8 = 0

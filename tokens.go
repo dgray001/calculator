@@ -64,6 +64,10 @@ func (token Token) isUnaryOperator() bool {
 	}
 }
 
+func (token Token) isBinaryOperator() bool {
+	return token.isOperator()
+}
+
 func (token Token) isParentheses() bool {
 	if token >= OPEN_PAREN && token <= CLOSE_BRACKET {
 		return true

@@ -35,15 +35,28 @@ func (node *AstNode) evaluatePass(start Token, end Token) error {
 			// check for unary operator
 			if i == 0 && len(node.operators) == len(node.values) {
 				if !operator.isUnaryOperator() {
-					return errors.New("Non unary operator in a unary operator position")
+					return errors.New("Non-unary operator in a unary operator position")
 				}
 				var result, unary_error = unaryOperation(operator, node.values[i])
 				if unary_error != nil {
 					return unary_error
 				}
 				node.values[i] = result
+			} else {
+				if !operator.isBinaryOperator() {
+					return errors.New("Non-binary operator in a binary operator position")
+				}
+				var j = i
+				if len(node.operators) == len(node.values) {
+					j--
+				}
+				var result, binary_error = binaryOperation(operator, node.values[j], node.values[j+1])
+				if binary_error != nil {
+					return binary_error
+				}
+				node.values = append(node.values[0:j], node.values[j:]...)
+				node.values[j] = result
 			}
-			// TODO: Evaluate binary operator
 		}
 	}
 	return nil

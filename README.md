@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0l: Unary operations
+v0.0m: Can add positive numbers
 
 Plans:
  - v0.1: Basic Operations
