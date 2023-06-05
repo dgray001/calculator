@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 func main() {
-	var tokens, tokenize_error = tokenize("2+2")
+	var tokens, tokenize_error = tokenize("17-26")
 	if tokenize_error != nil {
 		fmt.Println(tokenize_error)
 		return

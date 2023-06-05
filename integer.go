@@ -4,6 +4,26 @@ import (
 	"strconv"
 )
 
+type CompareResult int8
+
+const (
+	ERROR_CompareResult CompareResult = iota
+	LESSER_THAN
+	EQUAL_TO
+	GREATER_THAN
+)
+
+func (compare_result CompareResult) invert() CompareResult {
+	switch compare_result {
+	case LESSER_THAN:
+		return GREATER_THAN
+	case GREATER_THAN:
+		return LESSER_THAN
+	default:
+		return compare_result
+	}
+}
+
 type Integer struct {
 	int_sign    bool
 	digits      []uint8
@@ -88,25 +108,111 @@ func (i Integer) invert() Integer {
 	return i
 }
 
+func (i Integer) isZero() bool {
+	return len(i.digits) == 1 && i.digits[0] == 0
+}
+
+func (i Integer) compare(j Integer) CompareResult {
+	if !i.constructed || !j.constructed {
+		panic("Cannot compare unconstructed ints")
+	}
+	if i.isZero() && j.isZero() {
+		return EQUAL_TO
+	}
+	if i.int_sign && !j.int_sign {
+		return GREATER_THAN
+	} else if !i.int_sign && j.int_sign {
+		return LESSER_THAN
+	}
+	// have to actually calculate which has a greater absolute value
+	var compare_result = ERROR_CompareResult
+	if len(i.digits) > len(j.digits) {
+		compare_result = GREATER_THAN
+	} else if len(i.digits) < len(j.digits) {
+		compare_result = LESSER_THAN
+	} else {
+		compare_result = EQUAL_TO
+		for k := len(i.digits) - 1; k >= 0; k-- {
+			if i.digits[k] > j.digits[k] {
+				compare_result = GREATER_THAN
+				break
+			} else if i.digits[k] < j.digits[k] {
+				compare_result = LESSER_THAN
+				break
+			}
+		}
+	}
+	if !i.int_sign && !j.int_sign {
+		compare_result = compare_result.invert()
+	}
+	return compare_result
+}
+
 func (i Integer) add(j Integer) Integer {
 	if !i.constructed || !j.constructed {
 		panic("Cannot add unconstructed integers")
 	}
 	var return_integer = newInteger()
-	var remainder uint8 = 0
+	var subtraction = false
+	if !i.int_sign && !j.int_sign {
+		return_integer.int_sign = false
+	} else if !i.int_sign {
+		subtraction = true
+	} else if !j.int_sign {
+		subtraction = true
+	}
+
+	var remainder int8 = 0
 	for place := 0; place < len(i.digits) || place < len(j.digits); place++ {
-		var i_v uint8 = 0
-		var j_v uint8 = 0
+		var last_digit = place+1 >= len(i.digits) && place+1 >= len(j.digits)
+		var i_v int8 = 0
+		var j_v int8 = 0
 		if place < len(i.digits) {
-			i_v = i.digits[place]
+			if i.int_sign {
+				i_v = int8(i.digits[place])
+			} else {
+				i_v = -int8(i.digits[place])
+			}
 		}
 		if place < len(j.digits) {
-			j_v = j.digits[place]
+			if j.int_sign {
+				j_v = int8(j.digits[place])
+			} else {
+				j_v = -int8(j.digits[place])
+			}
 		}
 		var sum = i_v + j_v + remainder
-		return_integer = return_integer.addDigit(sum%10, true)
 		remainder = sum / 10
+		var sum_digit = sum % 10
+		if subtraction {
+			//
+		} else if sum_digit < 0 {
+			sum_digit = -sum_digit
+		}
+		if sum_digit < 0 {
+			if i.int_sign != j.int_sign {
+				if last_digit {
+					sum_digit = -sum_digit
+					return_integer.int_sign = false
+				} else {
+					sum_digit += 10
+					remainder = -1
+				}
+			} else {
+				sum_digit = -sum_digit
+			}
+		}
+		return_integer = return_integer.addDigit(uint8(sum_digit), true)
 	}
-	return_integer = return_integer.addDigit(remainder, true)
+	if remainder < 0 {
+		remainder = -remainder
+		return_integer.int_sign = false
+	}
+	return_integer = return_integer.addDigit(uint8(remainder), true)
 	return return_integer.construct()
+}
+
+func (i Integer) subtract(j Integer) Integer {
+	j.int_sign = !j.int_sign
+	return i.add(j)
 }
