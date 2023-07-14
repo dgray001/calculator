@@ -11,11 +11,13 @@ func TestIntegerEquals(t *testing.T) {
 		expected bool
 	}{
 		{Integer{digits: []uint8{}}, Integer{digits: []uint8{}}, true},
-		{Integer{digits: []uint8{1, 2}}, Integer{digits: []uint8{1, 2}}, true},
+		{Integer{digits: []uint8{2, 1}}, Integer{digits: []uint8{2, 1}}, true},
 		{Integer{digits: []uint8{4, 6, 9}}, Integer{digits: []uint8{4, 6, 9}}, true},
 		{Integer{digits: []uint8{}}, Integer{digits: []uint8{0}}, false},
 		{Integer{digits: []uint8{4, 9}}, Integer{digits: []uint8{7}}, false},
+		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7, 0}}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{0, 7}}, false},
+		{Integer{digits: []uint8{0, 7}}, Integer{digits: []uint8{0, 7}}, true},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{2}}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7}, constructed: true}, false},
 		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7}, int_sign: true}, false},
@@ -33,13 +35,13 @@ func TestConstruct(t *testing.T) {
 		i        Integer
 		expected Integer
 	}{
-		{Integer{}, Integer{digits: []uint8{0}, constructed: true}},
-		{Integer{digits: []uint8{0, 2}}, Integer{digits: []uint8{0, 2}, constructed: true}},
+		{Integer{}, Integer{digits: []uint8{0}, constructed: true, int_sign: true}},
+		{Integer{digits: []uint8{0, 2}}, Integer{digits: []uint8{2}, constructed: true}},
 		{Integer{digits: []uint8{4, 0, 2}}, Integer{digits: []uint8{4, 0, 2}, constructed: true}},
-		{Integer{digits: []uint8{4, 0}}, Integer{digits: []uint8{4}, constructed: true}},
-		{Integer{digits: []uint8{4, 2, 0, 0, 0}}, Integer{digits: []uint8{4, 2}, constructed: true}},
+		{Integer{digits: []uint8{4, 0}}, Integer{digits: []uint8{4, 0}, constructed: true}},
+		{Integer{digits: []uint8{4, 2, 0, 0, 0}}, Integer{digits: []uint8{4, 2, 0, 0, 0}, constructed: true}},
 		{Integer{digits: []uint8{0, 0, 0}}, Integer{digits: []uint8{0}, constructed: true}},
-		{Integer{digits: []uint8{0, 0, 0, 1, 0}}, Integer{digits: []uint8{0, 0, 0, 1}, constructed: true}},
+		{Integer{digits: []uint8{0, 0, 0, 1, 0}}, Integer{digits: []uint8{1, 0}, constructed: true}},
 	}
 	for _, tc := range testCases {
 		var got = tc.i.construct()
@@ -75,8 +77,8 @@ func TestAddDigit(t *testing.T) {
 	}{
 		{Integer{}, 0, Integer{digits: []uint8{0}}},
 		{Integer{}, 4, Integer{digits: []uint8{4}}},
-		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{2, 4}}},
-		{Integer{digits: []uint8{8, 0}}, 0, Integer{digits: []uint8{0, 8, 0}}},
+		{Integer{digits: []uint8{4}}, 2, Integer{digits: []uint8{4, 2}}},
+		{Integer{digits: []uint8{0, 8}}, 0, Integer{digits: []uint8{0, 8, 0}}},
 	}
 	for _, tc := range testCases {
 		got := tc.starting.addDigit(tc.input, false)
@@ -92,34 +94,19 @@ func TestCompareIntegers(t *testing.T) {
 		right    Integer
 		expected CompareResult
 	}{
-		{Integer{constructed: true}, Integer{constructed: true}, EQUAL_TO},
-		{
-			newInteger().addDigit(TWO.toInt(), false).addDigit(FOUR.toInt(), false).construct(),
-			newInteger().addDigit(TWO.toInt(), false).addDigit(FOUR.toInt(), false).construct(),
-			EQUAL_TO,
-		},
-		{
-			newInteger().addDigit(FOUR.toInt(), false).addDigit(TWO.toInt(), false).construct(),
-			newInteger().addDigit(TWO.toInt(), false).addDigit(FOUR.toInt(), false).construct(),
-			GREATER_THAN,
-		},
-		{
-			newInteger().addDigit(TWO.toInt(), false).addDigit(FOUR.toInt(), false).construct(),
-			newInteger().addDigit(FOUR.toInt(), false).addDigit(TWO.toInt(), false).construct(),
-			LESSER_THAN,
-		},
-		{
-			newInteger().addDigit(TWO.toInt(), false).addDigit(FOUR.toInt(), false).construct(),
-			newInteger().addDigit(NINE.toInt(), false).construct(),
-			GREATER_THAN,
-		},
-		{
-			newInteger().addDigit(ZERO.toInt(), false).addDigit(EIGHT.toInt(), false).construct(),
-			newInteger().addDigit(ONE.toInt(), false).addDigit(ONE.toInt(), false).construct(),
-			LESSER_THAN,
-		},
+		{Integer{}, Integer{digits: []uint8{0}}, EQUAL_TO},
+		{Integer{digits: []uint8{2, 1}, int_sign: true}, Integer{digits: []uint8{2, 1}, int_sign: true}, EQUAL_TO},
+		{Integer{digits: []uint8{4, 6, 9}, int_sign: true}, Integer{digits: []uint8{4, 6, 9}, int_sign: true}, EQUAL_TO},
+		{Integer{digits: []uint8{4, 9}, int_sign: true}, Integer{digits: []uint8{7}, int_sign: true}, GREATER_THAN},
+		{Integer{digits: []uint8{7}, int_sign: true}, Integer{digits: []uint8{7, 0}, int_sign: true}, LESSER_THAN},
+		{Integer{digits: []uint8{7}, int_sign: true}, Integer{digits: []uint8{0, 7}, int_sign: true}, EQUAL_TO},
+		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{2}}, LESSER_THAN},
+		{Integer{digits: []uint8{7}}, Integer{digits: []uint8{7, 0}}, GREATER_THAN},
+		{Integer{digits: []uint8{2, 3}, int_sign: true}, Integer{digits: []uint8{3, 1}, int_sign: true}, LESSER_THAN},
 	}
 	for _, tc := range testCases {
+		tc.left = tc.left.construct()
+		tc.right = tc.right.construct()
 		got := tc.left.compare(tc.right)
 		if got != tc.expected {
 			t.Errorf("For test case comparing %s with %s, got %d but expected %d", tc.left.toString(), tc.right.toString(), got, tc.expected)
@@ -152,43 +139,90 @@ func TestAdd(t *testing.T) {
 		right    Integer
 		expected Integer
 	}{
-		/*{
-			Integer{constructed: true},
-			Integer{constructed: true},
-			Integer{digits: []uint8{0}, constructed: true, int_sign: true},
-		},*/
+		// two positive nums
 		{
-			Integer{digits: []uint8{1}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{2}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{3}, constructed: true, int_sign: true},
+			Integer{},
+			Integer{},
+			Integer{digits: []uint8{0}, int_sign: true},
 		},
 		{
-			Integer{digits: []uint8{1, 0}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{0}, constructed: true, int_sign: false},
-			Integer{digits: []uint8{1}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{1}, int_sign: true},
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{3}, int_sign: true},
 		},
 		{
-			Integer{digits: []uint8{1, 3}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{0, 1}, constructed: true, int_sign: false},
-			Integer{digits: []uint8{1, 2}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{8, 9}, int_sign: true},
+			Integer{digits: []uint8{2, 4}, int_sign: true},
+			Integer{digits: []uint8{1, 1, 3}, int_sign: true},
 		},
-		/*{
-			Integer{digits: []uint8{4, 3}, constructed: true, int_sign: false},
-			Integer{digits: []uint8{3, 0}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{1, 3}, constructed: true, int_sign: false},
-		},*/
+		// two negative nums
 		{
-			Integer{digits: []uint8{9, 8}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{4, 2}, constructed: true, int_sign: true},
-			Integer{digits: []uint8{3, 1, 1}, constructed: true, int_sign: true},
+			Integer{digits: []uint8{6}, int_sign: false},
+			Integer{digits: []uint8{7}, int_sign: false},
+			Integer{digits: []uint8{1, 3}, int_sign: false},
 		},
 		{
-			Integer{digits: []uint8{9, 8}, constructed: true, int_sign: false},
-			Integer{digits: []uint8{4, 2}, constructed: true, int_sign: false},
-			Integer{digits: []uint8{3, 1, 1}, constructed: true, int_sign: false},
+			Integer{digits: []uint8{8, 9}, int_sign: false},
+			Integer{digits: []uint8{2, 4}, int_sign: false},
+			Integer{digits: []uint8{1, 1, 3}, int_sign: false},
+		},
+		// positive + negative
+		{
+			Integer{digits: []uint8{5}, int_sign: true},
+			Integer{digits: []uint8{2}, int_sign: false},
+			Integer{digits: []uint8{3}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{5}, int_sign: false},
+			Integer{digits: []uint8{3}, int_sign: false},
+		},
+		{
+			Integer{digits: []uint8{4, 2, 3}, int_sign: true},
+			Integer{digits: []uint8{6, 2}, int_sign: false},
+			Integer{digits: []uint8{3, 6, 1}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{1, 2, 3}, int_sign: true},
+			Integer{digits: []uint8{1, 1, 9}, int_sign: false},
+			Integer{digits: []uint8{4}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{6, 2}, int_sign: true},
+			Integer{digits: []uint8{4, 2, 3}, int_sign: false},
+			Integer{digits: []uint8{3, 6, 1}, int_sign: false},
+		},
+		{
+			Integer{digits: []uint8{1, 1, 9}, int_sign: true},
+			Integer{digits: []uint8{1, 2, 3}, int_sign: false},
+			Integer{digits: []uint8{4}, int_sign: false},
+		},
+		// negative + positive
+		{
+			Integer{digits: []uint8{5}, int_sign: false},
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{3}, int_sign: false},
+		},
+		{
+			Integer{digits: []uint8{2}, int_sign: false},
+			Integer{digits: []uint8{5}, int_sign: true},
+			Integer{digits: []uint8{3}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{1, 1, 9}, int_sign: false},
+			Integer{digits: []uint8{1, 2, 3}, int_sign: true},
+			Integer{digits: []uint8{4}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{1, 2, 3}, int_sign: false},
+			Integer{digits: []uint8{1, 1, 9}, int_sign: true},
+			Integer{digits: []uint8{4}, int_sign: false},
 		},
 	}
 	for _, tc := range testCases {
+		tc.left = tc.left.construct()
+		tc.right = tc.right.construct()
+		tc.expected = tc.expected.construct()
 		var got = tc.left.add(tc.right)
 		if !got.equals(tc.expected) {
 			t.Errorf("Test case adding %s and %s expected %s but got %s", tc.left.toString(), tc.right.toString(), tc.expected.toString(), got.toString())

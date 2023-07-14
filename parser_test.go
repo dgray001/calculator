@@ -16,7 +16,7 @@ func TestParse(t *testing.T) {
 			"",
 			AstNode{
 				values: []Value{
-					{value_type: INTEGER, integer: &Integer{digits: []uint8{2, 5}, constructed: true, int_sign: true}},
+					{value_type: INTEGER, integer: &Integer{digits: []uint8{5, 2}, constructed: true, int_sign: true}},
 					{value_type: AST_NODE, ast_node: &AstNode{
 						values:         []Value{{value_type: INTEGER, integer: &Integer{digits: []uint8{9}, constructed: true, int_sign: true}}},
 						lastAddedValue: true,

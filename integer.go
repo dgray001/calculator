@@ -41,10 +41,10 @@ func newInteger() Integer {
 func (i Integer) toString() string {
 	var return_string = ""
 	for _, digit := range i.digits {
-		return_string = strconv.FormatInt(int64(digit), 10) + return_string
+		return_string += strconv.FormatInt(int64(digit), 10)
 	}
 	if !i.int_sign && return_string != "0" {
-		return_string = "-" + return_string
+		return "-" + return_string
 	}
 	return return_string
 }
@@ -68,17 +68,17 @@ func (left Integer) equals(untyped interface{}) bool {
 	return true
 }
 
-func (i Integer) addDigit(digit uint8, add_to_end bool) Integer {
+func (i Integer) addDigit(digit uint8, add_to_front bool) Integer {
 	if i.constructed {
 		panic("Cannot add digit when integer is constructed")
 	}
 	if digit > 9 {
 		panic("Cannot add " + strconv.FormatInt(int64(digit), 10) + " since it is > 9")
 	}
-	if add_to_end {
-		i.digits = append(i.digits, digit)
-	} else {
+	if add_to_front {
 		i.digits = append([]uint8{digit}, i.digits...)
+	} else {
+		i.digits = append(i.digits, digit)
 	}
 	return i
 }
@@ -88,23 +88,29 @@ func (i Integer) construct() Integer {
 		panic("Cannot construct an integer that is already constructed")
 	}
 	i.constructed = true
-	var slice_index = len(i.digits)
-	for j := len(i.digits) - 1; j >= 0; j-- {
+	var slice_index = 0
+	for j := 0; j < len(i.digits)-1; j++ {
 		if i.digits[j] == 0 {
-			slice_index--
+			slice_index++
 		} else {
 			break
 		}
 	}
-	i.digits = i.digits[0:slice_index]
+	i.digits = i.digits[slice_index:]
 	if len(i.digits) == 0 {
 		i.digits = append(i.digits, 0)
+		i.int_sign = true
 	}
 	return i
 }
 
 func (i Integer) invert() Integer {
 	i.int_sign = !i.int_sign
+	return i
+}
+
+func (i Integer) abs() Integer {
+	i.int_sign = true
 	return i
 }
 
@@ -132,7 +138,7 @@ func (i Integer) compare(j Integer) CompareResult {
 		compare_result = LESSER_THAN
 	} else {
 		compare_result = EQUAL_TO
-		for k := len(i.digits) - 1; k >= 0; k-- {
+		for k := 0; k < len(i.digits); k++ {
 			if i.digits[k] > j.digits[k] {
 				compare_result = GREATER_THAN
 				break
@@ -162,53 +168,59 @@ func (i Integer) add(j Integer) Integer {
 		subtraction = true
 	}
 
-	var remainder int8 = 0
-	for place := 0; place < len(i.digits) || place < len(j.digits); place++ {
-		var last_digit = place+1 >= len(i.digits) && place+1 >= len(j.digits)
-		var i_v int8 = 0
-		var j_v int8 = 0
-		if place < len(i.digits) {
-			if i.int_sign {
-				i_v = int8(i.digits[place])
-			} else {
-				i_v = -int8(i.digits[place])
+	if subtraction {
+		var abs_compare = i.abs().compare(j.abs())
+		var switch_operands = false
+		switch abs_compare {
+		case EQUAL_TO:
+			return return_integer.construct()
+		case GREATER_THAN:
+			switch_operands = false
+			return_integer.int_sign = i.int_sign
+		case LESSER_THAN:
+			switch_operands = true
+			return_integer.int_sign = j.int_sign
+		default:
+			panic("Invalid compare result when subtracting")
+		}
+		var minuend Integer
+		var subtrahend Integer
+		if switch_operands {
+			minuend = j
+			subtrahend = i
+		} else {
+			minuend = i
+			subtrahend = j
+		}
+		for place := 0; place < len(minuend.digits); place++ {
+			var minuend_v = minuend.digits[len(minuend.digits)-1-place]
+			var subtrahend_v uint8 = 0
+			if place < len(subtrahend.digits) {
+				subtrahend_v = subtrahend.digits[len(subtrahend.digits)-1-place]
 			}
-		}
-		if place < len(j.digits) {
-			if j.int_sign {
-				j_v = int8(j.digits[place])
-			} else {
-				j_v = -int8(j.digits[place])
+			if subtrahend_v > minuend_v {
+				minuend_v += 10
+				minuend.digits[len(minuend.digits)-2-place]--
 			}
+			return_integer = return_integer.addDigit(minuend_v-subtrahend_v, true)
 		}
-		var sum = i_v + j_v + remainder
-		remainder = sum / 10
-		var sum_digit = sum % 10
-		if subtraction {
-			//
-		} else if sum_digit < 0 {
-			sum_digit = -sum_digit
-		}
-		if sum_digit < 0 {
-			if i.int_sign != j.int_sign {
-				if last_digit {
-					sum_digit = -sum_digit
-					return_integer.int_sign = false
-				} else {
-					sum_digit += 10
-					remainder = -1
-				}
-			} else {
-				sum_digit = -sum_digit
+	} else {
+		var remainder uint8 = 0
+		for place := 0; place < len(i.digits) || place < len(j.digits); place++ {
+			var i_v uint8 = 0
+			var j_v uint8 = 0
+			if place < len(i.digits) {
+				i_v = i.digits[len(i.digits)-1-place]
 			}
+			if place < len(j.digits) {
+				j_v = j.digits[len(j.digits)-1-place]
+			}
+			var sum = i_v + j_v + remainder
+			return_integer = return_integer.addDigit(sum%10, true)
+			remainder = sum / 10
 		}
-		return_integer = return_integer.addDigit(uint8(sum_digit), true)
+		return_integer = return_integer.addDigit(remainder, true)
 	}
-	if remainder < 0 {
-		remainder = -remainder
-		return_integer.int_sign = false
-	}
-	return_integer = return_integer.addDigit(uint8(remainder), true)
 	return return_integer.construct()
 }
 
