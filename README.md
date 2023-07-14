@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0o: Can subtract two integers
+v0.0p: Initial command-line input
 
 Plans:
  - v0.1: Basic Operations

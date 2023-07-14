@@ -84,3 +84,12 @@ func (value Value) toString(shallow bool) string {
 	return_string.WriteString("\n}")
 	return return_string.String()
 }
+
+func (value Value) toResultString() string {
+	switch value.value_type {
+	case INTEGER:
+		return value.integer.toString()
+	default:
+		panic("Unknown value type")
+	}
+}
