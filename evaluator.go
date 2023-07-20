@@ -9,12 +9,12 @@ func (node *AstNode) evaluate() (Value, error) {
 		return Value{}, errors.New("Can't evaluate node without values")
 	}
 	// pass for recursive evaluation
-	for _, value := range node.values {
-		var _, evaluate_error = value.evaluate()
+	for i, value := range node.values {
+		var evaluated_value, evaluate_error = value.evaluate()
 		if evaluate_error != nil {
 			return Value{}, evaluate_error
 		}
-		// TODO: Replace value with returned value
+		node.values[i] = evaluated_value
 	}
 	var pass_error error = nil
 	// pass for exponentiation

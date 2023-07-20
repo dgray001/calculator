@@ -1,30 +1,45 @@
 package main
 
-import "fmt"
+import (
+	"bufio"
+	"fmt"
+	"os"
+)
 
 func main() {
+	// config
+	var debug = false
+	// main loop
+	scanner := bufio.NewScanner(os.Stdin)
 	for {
-		var input string
-		fmt.Print(" > ")
-		fmt.Scanln(&input)
-		var tokens, tokenize_error = tokenize(input)
-		if tokenize_error != nil {
-			fmt.Println(tokenize_error)
-			continue
-		}
-		//fmt.Println("Tokens: ", tokens)
-		var ast, parse_error = parse(tokens)
-		if parse_error != nil {
-			fmt.Println(parse_error)
-			return
-		}
-		//fmt.Println("\nNode: ", ast.toString(false))
-		var result, evaluate_error = ast.evaluate()
-		if evaluate_error != nil {
-			fmt.Println(evaluate_error)
-			return
-		}
-		//fmt.Println("\nResult: ", result.toString(false))
-		fmt.Println(result.toResultString())
+		fmt.Print(" >  ")
+		scanner.Scan()
+		input := scanner.Text()
+		fmt.Println(calculate(input, debug))
 	}
+}
+
+func calculate(input string, debug bool) string {
+	var tokens, tokenize_error = tokenize(input)
+	if tokenize_error != nil {
+		return tokenize_error.Error()
+	}
+	if debug {
+		fmt.Println("Tokens: ", tokens)
+	}
+	var ast, parse_error = parse(tokens)
+	if parse_error != nil {
+		return parse_error.Error()
+	}
+	if debug {
+		fmt.Println("\nNode: ", ast.toString(false))
+	}
+	var result, evaluate_error = ast.evaluate()
+	if evaluate_error != nil {
+		return evaluate_error.Error()
+	}
+	if debug {
+		fmt.Println("\nResult: ", result.toString(false))
+	}
+	return result.toResultString()
 }

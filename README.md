@@ -1,14 +1,15 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0p: Initial command-line input
+v0.0q: Test user input
 
 Plans:
  - v0.1: Basic Operations
-o: Integer subtraction works
-p: Integer multiplication works
-q: Functions parsed
-r: Functions evaluated (increment, decrement)
-s: Program takes user input (test overall string input)
+    r: Can toggle debug mode
+    s: Integer multiplication
+    t: Functions parsed
+    u: Functions evaluated (increment, decrement, abs)
+    v: Brackets must close on same type
+    w: Test complex inputs => more functions
  - v0.2: Rational Numbers / Division
    - RationalNumbers struct (two int structs)
    - Add / subtract rational numbers

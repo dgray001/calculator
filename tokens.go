@@ -29,6 +29,7 @@ const (
 	// functions
 	INCREMENT
 	DECREMENT
+	ABSOLUTE
 
 	// to loop over possible tokens
 	tokenLimit
