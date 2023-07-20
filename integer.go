@@ -228,3 +228,33 @@ func (i Integer) subtract(j Integer) Integer {
 	j.int_sign = !j.int_sign
 	return i.add(j)
 }
+
+func (i Integer) multiply(j Integer) Integer {
+	if !i.constructed || !j.constructed {
+		panic("Cannot multiply unconstructed integers")
+	}
+	var return_integer = newInteger().construct()
+	// the "long multiplication" algorithm
+	for multiplicand := 0; multiplicand < len(i.digits); multiplicand++ {
+		var i_v = i.digits[len(i.digits)-1-multiplicand]
+		var addend = newInteger()
+		var remainder uint8 = 0
+		for multiplier := 0; multiplier < len(j.digits); multiplier++ {
+			var j_v = j.digits[len(j.digits)-1-multiplier]
+			var product = i_v*j_v + remainder
+			addend = addend.addDigit(product%10, true)
+			remainder = product / 10
+		}
+		addend = addend.addDigit(remainder, true)
+		for extra_zero := 0; extra_zero < multiplicand; extra_zero++ {
+			addend = addend.addDigit(0, false)
+		}
+		return_integer = return_integer.add(addend.construct())
+	}
+	if i.int_sign != j.int_sign && !return_integer.isZero() {
+		return_integer.int_sign = false
+	} else {
+		return_integer.int_sign = true
+	}
+	return return_integer
+}

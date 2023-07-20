@@ -135,8 +135,8 @@ func TestAddDigitPanic(t *testing.T) {
 
 func TestAdd(t *testing.T) {
 	testCases := []struct {
-		left     Integer
-		right    Integer
+		augend   Integer
+		addend   Integer
 		expected Integer
 	}{
 		// two positive nums
@@ -220,17 +220,119 @@ func TestAdd(t *testing.T) {
 		},
 	}
 	for _, tc := range testCases {
-		tc.left = tc.left.construct()
-		tc.right = tc.right.construct()
+		tc.augend = tc.augend.construct()
+		tc.addend = tc.addend.construct()
 		tc.expected = tc.expected.construct()
-		var got = tc.left.add(tc.right)
+		var got = tc.augend.add(tc.addend)
 		if !got.equals(tc.expected) {
-			t.Errorf("Test case adding %s and %s expected %s but got %s", tc.left.toString(), tc.right.toString(), tc.expected.toString(), got.toString())
+			t.Errorf("Test case adding %s and %s expected %s but got %s", tc.augend.toString(), tc.addend.toString(), tc.expected.toString(), got.toString())
 		}
 	}
 }
 
 func TestAddPanic(t *testing.T) {
+	testCases := []struct {
+		augend Integer
+		addend Integer
+	}{
+		{Integer{}, Integer{}},
+		{Integer{digits: []uint8{4}, constructed: true}, Integer{digits: []uint8{4}}},
+		{Integer{}, Integer{constructed: true}},
+	}
+	for _, tc := range testCases {
+		defer func() {
+			r := recover()
+			if r == nil {
+				t.Errorf("Test case adding %s and %s expecting panic did not panic", tc.augend.toString(), tc.addend.toString())
+			}
+		}()
+		tc.augend.add(tc.addend)
+	}
+}
+
+func TestMultiply(t *testing.T) {
+	testCases := []struct {
+		multiplicand Integer
+		multiplier   Integer
+		product      Integer
+	}{
+		// two positive nums
+		{
+			Integer{},
+			Integer{},
+			Integer{digits: []uint8{0}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{0}, int_sign: true},
+			Integer{digits: []uint8{2, 1}, int_sign: true},
+			Integer{digits: []uint8{0}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{2, 2}, int_sign: true},
+			Integer{digits: []uint8{0}, int_sign: true},
+			Integer{digits: []uint8{0}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{1}, int_sign: true},
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{2}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{3}, int_sign: true},
+			Integer{digits: []uint8{6}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{8, 9}, int_sign: true},
+			Integer{digits: []uint8{2, 4}, int_sign: true},
+			Integer{digits: []uint8{2, 1, 3, 6}, int_sign: true},
+		},
+		// two negative nums
+		{
+			Integer{digits: []uint8{6}, int_sign: false},
+			Integer{digits: []uint8{7}, int_sign: false},
+			Integer{digits: []uint8{4, 2}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{1, 2}, int_sign: false},
+			Integer{digits: []uint8{2, 4}, int_sign: false},
+			Integer{digits: []uint8{2, 8, 8}, int_sign: true},
+		},
+		// positive * negative
+		{
+			Integer{digits: []uint8{5}, int_sign: true},
+			Integer{digits: []uint8{0}, int_sign: false},
+			Integer{digits: []uint8{0}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{5}, int_sign: true},
+			Integer{digits: []uint8{2}, int_sign: false},
+			Integer{digits: []uint8{1, 0}, int_sign: false},
+		},
+		// negative * positive
+		{
+			Integer{digits: []uint8{0}, int_sign: false},
+			Integer{digits: []uint8{2}, int_sign: true},
+			Integer{digits: []uint8{0}, int_sign: true},
+		},
+		{
+			Integer{digits: []uint8{5}, int_sign: false},
+			Integer{digits: []uint8{3}, int_sign: true},
+			Integer{digits: []uint8{1, 5}, int_sign: false},
+		},
+	}
+	for _, tc := range testCases {
+		tc.multiplicand = tc.multiplicand.construct()
+		tc.multiplier = tc.multiplier.construct()
+		tc.product = tc.product.construct()
+		var got = tc.multiplicand.multiply(tc.multiplier)
+		if !got.equals(tc.product) {
+			t.Errorf("Test case multiplying %s and %s expected %s but got %s", tc.multiplicand.toString(), tc.multiplier.toString(), tc.product.toString(), got.toString())
+		}
+	}
+}
+
+func TestMultiplyPanic(t *testing.T) {
 	testCases := []struct {
 		left  Integer
 		right Integer
@@ -246,6 +348,6 @@ func TestAddPanic(t *testing.T) {
 				t.Errorf("Test case adding %s and %s expecting panic did not panic", tc.left.toString(), tc.right.toString())
 			}
 		}()
-		tc.left.add(tc.right)
+		tc.left.multiply(tc.right)
 	}
 }

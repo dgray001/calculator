@@ -34,7 +34,10 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 		}
 		return intValue(value1.integer.subtract(*value2.integer)), nil
 	case MULTIPLY:
-		panic("Not implemented")
+		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
+			panic("Cannot multiply node value types")
+		}
+		return intValue(value1.integer.multiply(*value2.integer)), nil
 	default:
 		panic("Invalid binary operator: " + operator.toString())
 	}
