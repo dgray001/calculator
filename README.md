@@ -1,11 +1,10 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0s: Basic integer functions
+v0.0t: Fix some bugs
 
 Plans:
  - v0.1: Basic Operations
     v: Brackets must close on same type
-    w: Test complex inputs => more functions
  - v0.2: Rational Numbers / Division
    - RationalNumbers struct (two int structs)
    - Add / subtract rational numbers

@@ -166,8 +166,8 @@ func TestAddToken(t *testing.T) {
 		{
 			AstNode{},
 			INCREMENT,
-			true,
-			AstNode{},
+			false,
+			AstNode{constructingNode: &AstNode{function: takePtr(INCREMENT)}},
 		},
 	}
 	for _, tc := range testCases {
@@ -178,12 +178,15 @@ func TestAddToken(t *testing.T) {
 			added_integer = newInteger().addDigit(FIVE.toInt(), false)
 		}
 		got := tc.start.addToken(tc.token)
-		if (got != nil) != tc.expectError {
-			t.Errorf("For test case adding token %s to %s, got error %s but expected %t",
-				tc.token.toString(), tc.start.toString(true), got.Error(), tc.expectError)
+		if got != nil && !tc.expectError {
+			t.Errorf("For test case adding token %s to %s, got unexpected error %s",
+				tc.token.toString(), tc.start.toString(true), got.Error())
+		} else if got == nil && tc.expectError {
+			t.Errorf("For test case adding token %s to %s, expected error but did not get one",
+				tc.token.toString(), tc.start.toString(true))
 		} else if !tc.start.equals(tc.expected) {
 			t.Errorf("For test case adding token %s, got %s but expected %s",
-				tc.token.toString(), tc.start.toString(false), tc.expected.toString(false))
+				tc.token.toString(), tc.start.toDebugString("  "), tc.expected.toDebugString("  "))
 		}
 	}
 }

@@ -15,3 +15,7 @@ func arrayEquals[T canEqual](a []T, b []T) bool {
 	}
 	return true
 }
+
+func takePtr[T any](v T) *T {
+	return &v
+}

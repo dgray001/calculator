@@ -114,6 +114,9 @@ func (node AstNode) toDebugString(append_string string) string {
 
 func (i AstNode) equals(untyped interface{}) bool {
 	var j = untyped.(AstNode)
+	if (i.function != nil) != (j.function != nil) {
+		return false
+	}
 	if (i.function != nil || j.function != nil) && *i.function != *j.function {
 		return false
 	}
