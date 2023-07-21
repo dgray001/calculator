@@ -32,7 +32,7 @@ func calculate(input string, debug bool) string {
 		return parse_error.Error()
 	}
 	if debug {
-		fmt.Println("\nNode: ", ast.toString(false))
+		fmt.Println("\nNode: ", ast.toDebugString("  "))
 	}
 	var result, evaluate_error = ast.evaluate()
 	if evaluate_error != nil {

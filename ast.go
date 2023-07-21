@@ -154,11 +154,15 @@ func (node *AstNode) addToken(token Token) error {
 			if error != nil {
 				return error
 			}
-			node.values = append(node.values, nodeValue(*node.constructingNode))
-			node.constructingNode = nil
-			node.lastAddedValue = true
-			node.lastAddedOperator = false
+			node.finishConstructingNode()
 			return nil
+		} else if token.isOperator() && node.constructingNode.function != nil &&
+			(len(node.constructingNode.values) > 0 || node.constructingNode.constructingInt != nil) {
+			var error = node.constructingNode.endTokens()
+			if error != nil {
+				return error
+			}
+			node.finishConstructingNode()
 		} else {
 			return node.constructingNode.addToken(token)
 		}
@@ -176,6 +180,8 @@ func (node *AstNode) addToken(token Token) error {
 	} else if token.isOperator() {
 		if node.lastAddedOperator && node.constructingInt == nil {
 			return errors.New("Can't add two operators in a row")
+		} else if node.function != nil && (len(node.values) > 0 || node.constructingInt != nil) {
+			return errors.New("Can't add operator to node with function")
 		} else {
 			node.operators = append(node.operators, token)
 			node.lastAddedOperator = true
@@ -188,6 +194,7 @@ func (node *AstNode) addToken(token Token) error {
 		}
 	} else if token.isOpenParens() {
 		if node.lastAddedValue {
+			// TODO: auto-add multiplication
 			return errors.New("Can't add two values in a row")
 		} else {
 			var new_node = newAstNode()
@@ -196,16 +203,37 @@ func (node *AstNode) addToken(token Token) error {
 	} else if token.isCloseParens() {
 		return errors.New("Can't end parentheses if not constructing a node")
 	} else if token.isFunction() {
-		return errors.New("Functions not implemented yet")
+		if node.lastAddedValue {
+			// TODO: auto-add multiplication
+			return errors.New("Can't add two values in a row")
+		} else {
+			var new_node = newAstNode()
+			new_node.function = &token
+			node.constructingNode = &new_node
+		}
 	} else {
 		return errors.New("Unrecognized token type")
 	}
 	return nil
 }
 
+func (node *AstNode) finishConstructingNode() {
+	if node.constructingNode == nil {
+		panic("Can't finish constructing node when not constructing node")
+	}
+	node.values = append(node.values, nodeValue(*node.constructingNode))
+	node.constructingNode = nil
+	node.lastAddedValue = true
+	node.lastAddedOperator = false
+}
+
 func (node *AstNode) endTokens() error {
 	if node.constructingNode != nil {
-		return errors.New("Can't end node while constructing node")
+		var recursive_error = node.constructingNode.endTokens()
+		if recursive_error != nil {
+			return recursive_error
+		}
+		node.finishConstructingNode()
 	}
 	if node.constructingInt != nil {
 		var new_integer = node.constructingInt.construct()

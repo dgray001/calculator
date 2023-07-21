@@ -1,5 +1,7 @@
 package main
 
+import "errors"
+
 func unaryOperation(operator Token, value Value) (Value, error) {
 	switch operator {
 	case PLUS:
@@ -7,17 +9,17 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 		case INTEGER:
 			return value, nil
 		default:
-			panic("Invalid value type for unary plus operation: " + value.value_type.toString())
+			return Value{}, errors.New("Invalid value type for unary plus operation: " + value.value_type.toString())
 		}
 	case MINUS:
 		switch value.value_type {
 		case INTEGER:
 			return intValue(value.integer.invert()), nil
 		default:
-			panic("Invalid value type for unary minus operation: " + value.value_type.toString())
+			return Value{}, errors.New("Invalid value type for unary minus operation: " + value.value_type.toString())
 		}
 	default:
-		panic("Invalid unary operator: " + operator.toString())
+		return Value{}, errors.New("Invalid unary operator: " + operator.toString())
 	}
 }
 
@@ -25,20 +27,48 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 	switch operator {
 	case PLUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			panic("Cannot add node value types")
+			return Value{}, errors.New("Cannot add node value types")
 		}
 		return intValue(value1.integer.add(*value2.integer)), nil
 	case MINUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			panic("Cannot subtract node value types")
+			return Value{}, errors.New("Cannot subtract node value types")
 		}
 		return intValue(value1.integer.subtract(*value2.integer)), nil
 	case MULTIPLY:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			panic("Cannot multiply node value types")
+			return Value{}, errors.New("Cannot multiply node value types")
 		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
 	default:
-		panic("Invalid binary operator: " + operator.toString())
+		return Value{}, errors.New("Invalid binary operator: " + operator.toString())
+	}
+}
+
+func evaluateFunction(function Token, value Value) (Value, error) {
+	switch function {
+	case INCREMENT:
+		switch value.value_type {
+		case INTEGER:
+			return intValue(value.integer.increment()), nil
+		default:
+			return Value{}, errors.New("Invalid value type for increment function: " + value.value_type.toString())
+		}
+	case DECREMENT:
+		switch value.value_type {
+		case INTEGER:
+			return intValue(value.integer.decrement()), nil
+		default:
+			return Value{}, errors.New("Invalid value type for decrement function: " + value.value_type.toString())
+		}
+	case ABSOLUTE:
+		switch value.value_type {
+		case INTEGER:
+			return intValue(value.integer.abs()), nil
+		default:
+			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
+		}
+	default:
+		return Value{}, errors.New("Invalid function: " + function.toString())
 	}
 }

@@ -1,11 +1,9 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0r: Integer multiplication
+v0.0s: Basic integer functions
 
 Plans:
  - v0.1: Basic Operations
-    t: Functions parsed
-    u: Functions evaluated (increment, decrement, abs)
     v: Brackets must close on same type
     w: Test complex inputs => more functions
  - v0.2: Rational Numbers / Division

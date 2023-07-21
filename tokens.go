@@ -91,7 +91,7 @@ func (token Token) isCloseParens() bool {
 }
 
 func (token Token) isFunction() bool {
-	if token >= INCREMENT && token <= DECREMENT {
+	if token >= INCREMENT && token <= ABSOLUTE {
 		return true
 	}
 	return false
@@ -164,8 +164,10 @@ func (token Token) toString() string {
 		return "inc"
 	case DECREMENT:
 		return "dec"
+	case ABSOLUTE:
+		return "abs"
 	default:
-		return ""
+		panic("Unrecognized token")
 	}
 }
 

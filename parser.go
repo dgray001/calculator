@@ -9,6 +9,6 @@ func parse(tokens []Token) (AstNode, error) {
 			return root_node, error
 		}
 	}
-	root_node.endTokens()
-	return root_node, nil
+	var end_error = root_node.endTokens()
+	return root_node, end_error
 }

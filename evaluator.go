@@ -31,6 +31,9 @@ func (node *AstNode) evaluate() (Value, error) {
 	if len(node.values) != 1 {
 		return Value{}, errors.New("Evaluation didn't result in a value")
 	}
+	if node.function != nil {
+		return evaluateFunction(*node.function, node.values[0])
+	}
 	return node.values[0], nil
 }
 

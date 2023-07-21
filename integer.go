@@ -114,6 +114,16 @@ func (i Integer) abs() Integer {
 	return i
 }
 
+func (i Integer) increment() Integer {
+	var one = newInteger().addDigit(ONE.toInt(), false).construct()
+	return i.add(one)
+}
+
+func (i Integer) decrement() Integer {
+	var one = newInteger().addDigit(ONE.toInt(), false).construct()
+	return i.subtract(one)
+}
+
 func (i Integer) isZero() bool {
 	return len(i.digits) == 1 && i.digits[0] == 0
 }
