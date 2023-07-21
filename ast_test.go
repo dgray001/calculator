@@ -158,7 +158,7 @@ func TestAddToken(t *testing.T) {
 			AstNode{constructingNode: &AstNode{operators: []Token{PLUS}, lastAddedOperator: true}},
 		},
 		{
-			AstNode{constructingNode: &AstNode{}},
+			AstNode{constructingNode: &AstNode{}, closedBracketType: takePtr(CLOSE_PAREN)},
 			CLOSE_PAREN,
 			false,
 			AstNode{values: []Value{{value_type: AST_NODE, ast_node: &AstNode{}}}, lastAddedValue: true},
@@ -168,6 +168,30 @@ func TestAddToken(t *testing.T) {
 			INCREMENT,
 			false,
 			AstNode{constructingNode: &AstNode{function: takePtr(INCREMENT)}},
+		},
+		{
+			AstNode{constructingNode: &AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}, closedBracketType: takePtr(CLOSE_PAREN)},
+			CLOSE_BRACKET,
+			true,
+			AstNode{constructingNode: &AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}},
+		},
+		{
+			AstNode{constructingNode: &AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}, closedBracketType: takePtr(CLOSE_PAREN)},
+			CLOSE_BRACKET,
+			true,
+			AstNode{constructingNode: &AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}},
+		},
+		{
+			AstNode{constructingNode: &AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}, closedBracketType: takePtr(CLOSE_BRACKET)},
+			CLOSE_BRACKET,
+			false,
+			AstNode{values: []Value{nodeValue(AstNode{values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}})}, lastAddedValue: true},
+		},
+		{
+			AstNode{constructingNode: &AstNode{function: takePtr(INCREMENT), values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}, closedBracketType: takePtr(CLOSE_BRACKET)},
+			MULTIPLY,
+			true,
+			AstNode{constructingNode: &AstNode{function: takePtr(INCREMENT), values: []Value{intValue(newInteger().addDigit(ONE.toInt(), false).construct())}}},
 		},
 	}
 	for _, tc := range testCases {
@@ -180,10 +204,10 @@ func TestAddToken(t *testing.T) {
 		got := tc.start.addToken(tc.token)
 		if got != nil && !tc.expectError {
 			t.Errorf("For test case adding token %s to %s, got unexpected error %s",
-				tc.token.toString(), tc.start.toString(true), got.Error())
+				tc.token.toString(), tc.start.toDebugString("  "), got.Error())
 		} else if got == nil && tc.expectError {
 			t.Errorf("For test case adding token %s to %s, expected error but did not get one",
-				tc.token.toString(), tc.start.toString(true))
+				tc.token.toString(), tc.start.toDebugString("  "))
 		} else if !tc.start.equals(tc.expected) {
 			t.Errorf("For test case adding token %s, got %s but expected %s",
 				tc.token.toString(), tc.start.toDebugString("  "), tc.expected.toDebugString("  "))

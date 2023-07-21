@@ -12,8 +12,9 @@ type AstNode struct {
 	values    []Value
 	operators []Token
 
-	constructingInt  *Integer
-	constructingNode *AstNode
+	constructingInt   *Integer
+	constructingNode  *AstNode
+	closedBracketType *Token // use nil for an implied bracket
 
 	lastAddedValue    bool
 	lastAddedOperator bool
@@ -153,6 +154,9 @@ func (i AstNode) equals(untyped interface{}) bool {
 func (node *AstNode) addToken(token Token) error {
 	if node.constructingNode != nil {
 		if token.isCloseParens() && node.constructingNode.constructingNode == nil {
+			if *node.closedBracketType != token {
+				return errors.New("Didn't close bracket on same type as opening it")
+			}
 			var error = node.constructingNode.endTokens()
 			if error != nil {
 				return error
@@ -161,6 +165,9 @@ func (node *AstNode) addToken(token Token) error {
 			return nil
 		} else if token.isOperator() && node.constructingNode.function != nil &&
 			(len(node.constructingNode.values) > 0 || node.constructingNode.constructingInt != nil) {
+			if node.closedBracketType != nil {
+				return errors.New("Implied closing of explicit bracket type")
+			}
 			var error = node.constructingNode.endTokens()
 			if error != nil {
 				return error
@@ -202,6 +209,7 @@ func (node *AstNode) addToken(token Token) error {
 		} else {
 			var new_node = newAstNode()
 			node.constructingNode = &new_node
+			node.closedBracketType = takePtr(Token(token + 1))
 		}
 	} else if token.isCloseParens() {
 		return errors.New("Can't end parentheses if not constructing a node")
@@ -213,6 +221,7 @@ func (node *AstNode) addToken(token Token) error {
 			var new_node = newAstNode()
 			new_node.function = &token
 			node.constructingNode = &new_node
+			node.closedBracketType = nil
 		}
 	} else {
 		return errors.New("Unrecognized token type")
