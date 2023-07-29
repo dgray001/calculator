@@ -4,26 +4,6 @@ import (
 	"strconv"
 )
 
-type CompareResult int8
-
-const (
-	ERROR_CompareResult CompareResult = iota
-	LESSER_THAN
-	EQUAL_TO
-	GREATER_THAN
-)
-
-func (compare_result CompareResult) invert() CompareResult {
-	switch compare_result {
-	case LESSER_THAN:
-		return GREATER_THAN
-	case GREATER_THAN:
-		return LESSER_THAN
-	default:
-		return compare_result
-	}
-}
-
 type Integer struct {
 	int_sign    bool
 	digits      []uint8
