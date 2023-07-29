@@ -9,6 +9,7 @@ type ValueType int8
 const (
 	ERROR_ValueType ValueType = iota
 	INTEGER
+	RATIONAL_NUMBER
 	AST_NODE
 )
 
@@ -16,6 +17,8 @@ func (value_type ValueType) toString() string {
 	switch value_type {
 	case INTEGER:
 		return "Integer"
+	case RATIONAL_NUMBER:
+		return "Rational Number"
 	case AST_NODE:
 		return "AstNode"
 	default:
@@ -26,8 +29,8 @@ func (value_type ValueType) toString() string {
 type Value struct {
 	value_type ValueType
 
-	integer *Integer
-	// rational number
+	integer  *Integer
+	rational *RationalNumber
 	// irrational number
 	ast_node *AstNode
 }
@@ -36,6 +39,14 @@ func intValue(integer Integer) Value {
 	return Value{
 		value_type: INTEGER,
 		integer:    &integer,
+		ast_node:   nil,
+	}
+}
+
+func rationalValue(rational RationalNumber) Value {
+	return Value{
+		value_type: INTEGER,
+		rational:   &rational,
 		ast_node:   nil,
 	}
 }
@@ -58,6 +69,8 @@ func (i Value) equals(untyped interface{}) bool {
 		return true
 	case INTEGER:
 		return i.integer.equals(*j.integer)
+	case RATIONAL_NUMBER:
+		return i.rational.equals(*j.rational)
 	case AST_NODE:
 		return i.ast_node.equals(*j.ast_node)
 	default:
@@ -72,6 +85,8 @@ func (value Value) toString(shallow bool) string {
 	switch value.value_type {
 	case INTEGER:
 		return_string.WriteString("\n  integer: " + value.integer.toString())
+	case RATIONAL_NUMBER:
+		return_string.WriteString("\n  rational: " + value.rational.toString())
 	case AST_NODE:
 		if shallow {
 			return_string.WriteString("\n  ast_node: ...")
@@ -89,6 +104,8 @@ func (value Value) toResultString() string {
 	switch value.value_type {
 	case INTEGER:
 		return value.integer.toString()
+	case RATIONAL_NUMBER:
+		return value.rational.toString()
 	default:
 		panic("Unknown value type")
 	}

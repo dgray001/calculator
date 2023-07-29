@@ -22,7 +22,7 @@ func (node *AstNode) evaluate() (Value, error) {
 	var values_deleted int = 0
 	// pass for exponentiation
 	// pass for multiplication
-	values_deleted, pass_error = node.evaluatePass(MULTIPLY, MULTIPLY, values_deleted)
+	values_deleted, pass_error = node.evaluatePass(MULTIPLY, DIVIDE, values_deleted)
 	if pass_error != nil {
 		return Value{}, pass_error
 	}

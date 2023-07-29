@@ -19,6 +19,7 @@ const (
 	PLUS
 	MINUS
 	MULTIPLY
+	DIVIDE
 
 	// parentheses
 	OPEN_PAREN

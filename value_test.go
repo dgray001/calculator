@@ -24,6 +24,9 @@ func TestValueEquals(t *testing.T) {
 		},
 		{Value{value_type: INTEGER, integer: &Integer{}}, Value{value_type: INTEGER, integer: &Integer{constructed: true}}, false},
 		{Value{value_type: AST_NODE, ast_node: &AstNode{}}, Value{value_type: AST_NODE, ast_node: &AstNode{lastAddedValue: true}}, false},
+		{Value{value_type: RATIONAL_NUMBER, rational: &RationalNumber{}}, Value{value_type: INTEGER, integer: &Integer{constructed: true}}, false},
+		{Value{value_type: RATIONAL_NUMBER, rational: &RationalNumber{}}, Value{value_type: AST_NODE, ast_node: &AstNode{lastAddedValue: true}}, false},
+		{Value{value_type: RATIONAL_NUMBER, rational: &RationalNumber{}}, Value{value_type: RATIONAL_NUMBER, rational: &RationalNumber{}}, true},
 	}
 	for _, tc := range testCases {
 		got := tc.left.equals(tc.right)
