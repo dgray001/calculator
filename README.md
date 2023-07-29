@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.0u: Must close brackets correctly
+v0.1: Basic integer operations
 
 Plans:
  - v0.2: Rational Numbers / Division
