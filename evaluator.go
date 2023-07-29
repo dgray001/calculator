@@ -2,14 +2,12 @@ package main
 
 import (
 	"errors"
-	"fmt"
 )
 
 func (node *AstNode) evaluate() (Value, error) {
 	if len(node.values) == 0 {
 		return Value{}, errors.New("Can't evaluate node without values")
 	}
-	fmt.Println("\n\n", node.toDebugString("  "))
 	// pass for recursive evaluation
 	for i, value := range node.values {
 		var evaluated_value, evaluate_error = value.evaluate()
@@ -27,7 +25,6 @@ func (node *AstNode) evaluate() (Value, error) {
 		return Value{}, pass_error
 	}
 	// pass for addition
-	fmt.Println("\n\n", node.toDebugString("  "))
 	values_deleted, pass_error = node.evaluatePass(PLUS, MINUS, values_deleted)
 	if pass_error != nil {
 		return Value{}, pass_error

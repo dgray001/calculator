@@ -45,3 +45,8 @@ func (left RationalNumber) equals(untyped interface{}) bool {
 	}
 	return true
 }
+
+func (i RationalNumber) invert() RationalNumber {
+	i.rational_sign = !i.rational_sign
+	return i
+}

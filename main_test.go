@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 )
 
@@ -28,6 +27,11 @@ func Test(t *testing.T) {
 		{input: "3*2-1", expected: "5"},
 		{input: "13*12", expected: "156"},
 		{input: "2 * (3 - 6) * (-1)", expected: "6"},
+		// Division
+		{input: "2 / 3", expected: "2/3"},
+		{input: "3 * 6 / 5", expected: "18/5"},
+		{input: "+(2/3)", expected: "2/3"},
+		{input: "-(2/3)", expected: "-2/3"},
 		// Functions
 		{input: "i n c 1", expected: "2"},
 		{input: "2 - inc(23)", expected: "-22"},
@@ -42,7 +46,6 @@ func Test(t *testing.T) {
 		{input: "4 - abs(-1) + 3", expected: "6"},
 	}
 	for _, tc := range testCases {
-		fmt.Println("\n\n", tc.input)
 		got := calculate(tc.input, false)
 		if got != tc.expected {
 			t.Errorf("Testing calculator input %s, expected %s but got %s", tc.input, tc.expected, got)

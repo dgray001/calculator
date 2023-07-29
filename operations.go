@@ -8,6 +8,8 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 		switch value.value_type {
 		case INTEGER:
 			return value, nil
+		case RATIONAL_NUMBER:
+			return value, nil
 		default:
 			return Value{}, errors.New("Invalid value type for unary plus operation: " + value.value_type.toString())
 		}
@@ -15,6 +17,10 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 		switch value.value_type {
 		case INTEGER:
 			return intValue(value.integer.invert()), nil
+		case RATIONAL_NUMBER:
+			var v = value.rational.invert()
+			value.rational = &v
+			return value, nil
 		default:
 			return Value{}, errors.New("Invalid value type for unary minus operation: " + value.value_type.toString())
 		}
@@ -40,6 +46,11 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 			return Value{}, errors.New("Cannot multiply node value types")
 		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
+	case DIVIDE:
+		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
+			return Value{}, errors.New("Cannot divide node value types")
+		}
+		return rationalValue(newRationalNumber(*value1.integer, *value2.integer)), nil
 	default:
 		return Value{}, errors.New("Invalid binary operator: " + operator.toString())
 	}

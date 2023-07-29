@@ -49,7 +49,7 @@ func (token Token) isInt() bool {
 }
 
 func (token Token) isOperator() bool {
-	if token >= PLUS && token <= MULTIPLY {
+	if token >= PLUS && token <= DIVIDE {
 		return true
 	}
 	return false
@@ -153,6 +153,8 @@ func (token Token) toString() string {
 		return "-"
 	case MULTIPLY:
 		return "*"
+	case DIVIDE:
+		return "/"
 	case OPEN_PAREN:
 		return "("
 	case CLOSE_PAREN:

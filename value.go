@@ -45,7 +45,7 @@ func intValue(integer Integer) Value {
 
 func rationalValue(rational RationalNumber) Value {
 	return Value{
-		value_type: INTEGER,
+		value_type: RATIONAL_NUMBER,
 		rational:   &rational,
 		ast_node:   nil,
 	}
