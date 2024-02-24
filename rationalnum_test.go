@@ -121,3 +121,25 @@ func TestIsZero(t *testing.T) {
 		}
 	}
 }
+
+func TestCompare(t *testing.T) {
+	type TestCase struct {
+		i        RationalNumber
+		j        RationalNumber
+		expected CompareResult
+	}
+	var testCases = []TestCase{
+		{i: constructRationalNumber(0, 5), j: constructRationalNumber(0, 5), expected: EQUAL_TO},
+		{i: constructRationalNumber(12, 5), j: constructRationalNumber(-12, 5), expected: GREATER_THAN},
+		{i: constructRationalNumber(12, -5), j: constructRationalNumber(12, 5), expected: LESSER_THAN},
+		{i: constructRationalNumber(16, 4), j: constructRationalNumber(4, 1), expected: EQUAL_TO},
+		{i: constructRationalNumber(99, 100), j: constructRationalNumber(98, 99), expected: GREATER_THAN},
+		{i: constructRationalNumber(-0, 3), j: constructRationalNumber(-1, 6), expected: GREATER_THAN},
+	}
+	for _, tc := range testCases {
+		got := tc.i.compare(tc.j)
+		if got != tc.expected {
+			t.Errorf("For test case comparing %s and %s, got %d", tc.i.toString(), tc.j.toString(), got)
+		}
+	}
+}
