@@ -22,6 +22,10 @@ func newRationalNumber(i Integer, j Integer) RationalNumber {
 	}
 }
 
+func constructRationalNumber(i int, j int) RationalNumber {
+	return newRationalNumber(constructInt(i), constructInt(j))
+}
+
 func (i RationalNumber) toString() string {
 	var return_string = ""
 	if !i.rational_sign {
@@ -43,7 +47,7 @@ func (left RationalNumber) equals(untyped interface{}) bool {
 	if !left.numerator.equals(right.numerator) {
 		return false
 	}
-	if !right.denominator.equals(right.denominator) {
+	if !left.denominator.equals(right.denominator) {
 		return false
 	}
 	return true
@@ -94,7 +98,9 @@ func (i RationalNumber) compare(j RationalNumber) CompareResult {
 }
 
 func (i RationalNumber) add(j RationalNumber) RationalNumber {
+	return i
 }
 
 func (i RationalNumber) subtract(j RationalNumber) RationalNumber {
+	return i
 }

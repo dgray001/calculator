@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1d: Construct int
+v0.1e: Rational invertion and abs
 
 Plans:
  - v0.2: Rational Numbers / Division
@@ -8,7 +8,6 @@ Plans:
    - Multiply rational numbers
    - Division token turns ints into rational numbers
    - Rational numbers auto-simplify => can turn into an int
-   - Absolute value function
    - Factorial operator
  - v0.3: Irrational Numbers / Roots
  - v0.4: Limits

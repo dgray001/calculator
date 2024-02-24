@@ -85,6 +85,8 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		switch value.value_type {
 		case INTEGER:
 			return intValue(value.integer.increment()), nil
+		case RATIONAL_NUMBER:
+			return rationalValue(value.rational.increment()), nil
 		default:
 			return Value{}, errors.New("Invalid value type for increment function: " + value.value_type.toString())
 		}
@@ -92,6 +94,8 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		switch value.value_type {
 		case INTEGER:
 			return intValue(value.integer.decrement()), nil
+		case RATIONAL_NUMBER:
+			return rationalValue(value.rational.decrement()), nil
 		default:
 			return Value{}, errors.New("Invalid value type for decrement function: " + value.value_type.toString())
 		}
@@ -99,6 +103,8 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		switch value.value_type {
 		case INTEGER:
 			return intValue(value.integer.abs()), nil
+		case RATIONAL_NUMBER:
+			return rationalValue(value.rational.abs()), nil
 		default:
 			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
 		}
