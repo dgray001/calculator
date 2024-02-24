@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1g: Rational compare
+v0.1h: Rational add and subtract
 
 Plans:
  - v0.2: Rational Numbers / Division

@@ -12,7 +12,7 @@ func TestEvaluate(t *testing.T) {
 	}{
 		{
 			AstNode{},
-			"Can't evaluate node without values",
+			"can't evaluate node without values",
 			Value{},
 		},
 		{
@@ -24,6 +24,11 @@ func TestEvaluate(t *testing.T) {
 			AstNode{values: []Value{intValue(newInteger().addDigit(TWO.toInt(), false).construct())}, operators: []Token{MINUS}},
 			"",
 			Value{value_type: INTEGER, integer: &Integer{digits: []uint8{2}, constructed: true, int_sign: false}},
+		},
+		{
+			AstNode{values: []Value{intValue(newInteger().addDigit(TWO.toInt(), false).construct())}, operators: []Token{MULTIPLY}},
+			"non-unary operator in a unary operator position",
+			Value{},
 		},
 	}
 	for _, tc := range testCases {

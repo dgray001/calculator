@@ -98,9 +98,21 @@ func (i RationalNumber) compare(j RationalNumber) CompareResult {
 }
 
 func (i RationalNumber) add(j RationalNumber) RationalNumber {
-	return i
+	// a/b + c/d = (ad + bc) / bd
+	i.numerator.int_sign = i.rational_sign
+	j.numerator.int_sign = j.rational_sign
+	ad := i.numerator.multiply(j.denominator)
+	bc := i.denominator.multiply(j.numerator)
+	bd := i.denominator.multiply(j.denominator)
+	return newRationalNumber(ad.add(bc), bd)
 }
 
 func (i RationalNumber) subtract(j RationalNumber) RationalNumber {
-	return i
+	// a/b - c/d = (ad - bc) / bd
+	i.numerator.int_sign = i.rational_sign
+	j.numerator.int_sign = j.rational_sign
+	ad := i.numerator.multiply(j.denominator)
+	bc := i.denominator.multiply(j.numerator)
+	bd := i.denominator.multiply(j.denominator)
+	return newRationalNumber(ad.subtract(bc), bd)
 }

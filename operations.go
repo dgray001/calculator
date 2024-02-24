@@ -11,7 +11,7 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 		case RATIONAL_NUMBER:
 			return value, nil
 		default:
-			return Value{}, errors.New("Invalid value type for unary plus operation: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for unary plus operation: " + value.value_type.toString())
 		}
 	case MINUS:
 		switch value.value_type {
@@ -22,10 +22,10 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 			value.rational = &v
 			return value, nil
 		default:
-			return Value{}, errors.New("Invalid value type for unary minus operation: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for unary minus operation: " + value.value_type.toString())
 		}
 	default:
-		return Value{}, errors.New("Invalid unary operator: " + operator.toString())
+		return Value{}, errors.New("invalid unary operator: " + operator.toString())
 	}
 }
 
@@ -34,7 +34,7 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 
 	case PLUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			return Value{}, errors.New("Cannot add node value types")
+			return Value{}, errors.New("cannot add node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
 			return rationalValue(value1.asRational().add(value2.asRational())), nil
@@ -43,39 +43,38 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 
 	case MINUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			return Value{}, errors.New("Cannot subtract node value types")
+			return Value{}, errors.New("cannot subtract node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
-			// TODO: implement
-			return Value{}, errors.New("Cannot subtract rationals yet")
+			return rationalValue(value1.asRational().subtract(value2.asRational())), nil
 		}
 		return intValue(value1.integer.subtract(*value2.integer)), nil
 
 	case MULTIPLY:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			return Value{}, errors.New("Cannot multiply node value types")
+			return Value{}, errors.New("cannot multiply node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
 			// TODO: implement
-			return Value{}, errors.New("Cannot multiply rationals yet")
+			return Value{}, errors.New("cannot multiply rationals yet")
 		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
 
 	case DIVIDE:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
-			return Value{}, errors.New("Cannot divide node value types")
+			return Value{}, errors.New("cannot divide node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
 			// TODO: implement
-			return Value{}, errors.New("Cannot divide rationals yet")
+			return Value{}, errors.New("cannot divide rationals yet")
 		}
 		if value2.integer.isZero() {
-			return Value{}, errors.New("Cannot divide by zero")
+			return Value{}, errors.New("cannot divide by zero")
 		}
 		return rationalValue(newRationalNumber(*value1.integer, *value2.integer)), nil
 
 	default:
-		return Value{}, errors.New("Invalid binary operator: " + operator.toString())
+		return Value{}, errors.New("invalid binary operator: " + operator.toString())
 	}
 }
 
@@ -89,7 +88,7 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		case RATIONAL_NUMBER:
 			return rationalValue(value.rational.increment()), nil
 		default:
-			return Value{}, errors.New("Invalid value type for increment function: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for increment function: " + value.value_type.toString())
 		}
 
 	case DECREMENT:
@@ -99,7 +98,7 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		case RATIONAL_NUMBER:
 			return rationalValue(value.rational.decrement()), nil
 		default:
-			return Value{}, errors.New("Invalid value type for decrement function: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for decrement function: " + value.value_type.toString())
 		}
 
 	case ABSOLUTE:
@@ -109,7 +108,7 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		case RATIONAL_NUMBER:
 			return rationalValue(value.rational.abs()), nil
 		default:
-			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for absolute value function: " + value.value_type.toString())
 		}
 
 	case INVERT:
@@ -119,10 +118,10 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		case RATIONAL_NUMBER:
 			return rationalValue(value.rational.invert()), nil
 		default:
-			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
+			return Value{}, errors.New("invalid value type for absolute value function: " + value.value_type.toString())
 		}
 
 	default:
-		return Value{}, errors.New("Invalid function: " + function.toString())
+		return Value{}, errors.New("invalid function: " + function.toString())
 	}
 }

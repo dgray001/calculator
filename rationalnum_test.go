@@ -143,3 +143,38 @@ func TestCompare(t *testing.T) {
 		}
 	}
 }
+
+func TestAddRational(t *testing.T) {
+	type TestCase struct {
+		i        RationalNumber
+		j        RationalNumber
+		expected string
+	}
+	var testCases = []TestCase{
+		{i: constructRationalNumber(0, 5), j: constructRationalNumber(0, 5), expected: "0/25"},
+		{i: constructRationalNumber(12, 5), j: constructRationalNumber(3, 5), expected: "75/25"},
+	}
+	for _, tc := range testCases {
+		got := tc.i.add(tc.j)
+		if got.toString() != tc.expected {
+			t.Errorf("For test case adding %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+		}
+	}
+}
+
+func TestSubtractRational(t *testing.T) {
+	type TestCase struct {
+		i        RationalNumber
+		j        RationalNumber
+		expected string
+	}
+	var testCases = []TestCase{
+		{i: constructRationalNumber(3, 5), j: constructRationalNumber(12, 5), expected: "-45/25"},
+	}
+	for _, tc := range testCases {
+		got := tc.i.subtract(tc.j)
+		if got.toString() != tc.expected {
+			t.Errorf("For test case subtracting %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+		}
+	}
+}

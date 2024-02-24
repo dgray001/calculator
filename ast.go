@@ -155,7 +155,7 @@ func (node *AstNode) addToken(token Token) error {
 	if node.constructingNode != nil {
 		if token.isCloseParens() && node.constructingNode.constructingNode == nil {
 			if *node.closedBracketType != token {
-				return errors.New("Didn't close bracket on same type as opening it")
+				return errors.New("didn't close bracket on same type as opening it")
 			}
 			var error = node.constructingNode.endTokens()
 			if error != nil {
@@ -166,7 +166,7 @@ func (node *AstNode) addToken(token Token) error {
 		} else if token.isOperator() && node.constructingNode.function != nil &&
 			(len(node.constructingNode.values) > 0 || node.constructingNode.constructingInt != nil) {
 			if node.closedBracketType != nil {
-				return errors.New("Implied closing of explicit bracket type")
+				return errors.New("implied closing of explicit bracket type")
 			}
 			var error = node.constructingNode.endTokens()
 			if error != nil {
@@ -179,7 +179,7 @@ func (node *AstNode) addToken(token Token) error {
 	}
 	if token.isInt() {
 		if node.lastAddedValue {
-			return errors.New("Can't add two values in a row")
+			return errors.New("can't add two values in a row")
 		} else if node.constructingInt != nil {
 			var added_int = node.constructingInt.addDigit(token.toInt(), false)
 			node.constructingInt = &added_int
@@ -189,9 +189,9 @@ func (node *AstNode) addToken(token Token) error {
 		}
 	} else if token.isOperator() {
 		if node.lastAddedOperator && node.constructingInt == nil {
-			return errors.New("Can't add two operators in a row")
+			return errors.New("can't add two operators in a row")
 		} else if node.function != nil && (len(node.values) > 0 || node.constructingInt != nil) {
-			return errors.New("Can't add operator to node with function")
+			return errors.New("can't add operator to node with function")
 		} else {
 			node.operators = append(node.operators, token)
 			node.lastAddedOperator = true
@@ -205,18 +205,18 @@ func (node *AstNode) addToken(token Token) error {
 	} else if token.isOpenParens() {
 		if node.lastAddedValue {
 			// TODO: auto-add multiplication
-			return errors.New("Can't add two values in a row")
+			return errors.New("can't add two values in a row")
 		} else {
 			var new_node = newAstNode()
 			node.constructingNode = &new_node
 			node.closedBracketType = takePtr(Token(token + 1))
 		}
 	} else if token.isCloseParens() {
-		return errors.New("Can't end parentheses if not constructing a node")
+		return errors.New("can't end parentheses if not constructing a node")
 	} else if token.isFunction() {
 		if node.lastAddedValue {
 			// TODO: auto-add multiplication
-			return errors.New("Can't add two values in a row")
+			return errors.New("can't add two values in a row")
 		} else {
 			var new_node = newAstNode()
 			new_node.function = &token
@@ -224,14 +224,14 @@ func (node *AstNode) addToken(token Token) error {
 			node.closedBracketType = nil
 		}
 	} else {
-		return errors.New("Unrecognized token type")
+		return errors.New("unrecognized token type")
 	}
 	return nil
 }
 
 func (node *AstNode) finishConstructingNode() {
 	if node.constructingNode == nil {
-		panic("Can't finish constructing node when not constructing node")
+		panic("can't finish constructing node when not constructing node")
 	}
 	node.values = append(node.values, nodeValue(*node.constructingNode))
 	node.constructingNode = nil
@@ -255,11 +255,11 @@ func (node *AstNode) endTokens() error {
 		node.constructingInt = nil
 	}
 	if node.lastAddedOperator {
-		return errors.New("Can't end node on an operator")
+		return errors.New("can't end node on an operator")
 	}
 	var length_difference = len(node.values) - len(node.operators)
 	if length_difference < 0 || length_difference > 1 {
-		return errors.New("Incorrect number of values and operators")
+		return errors.New("incorrect number of values and operators")
 	}
 	return nil
 }
