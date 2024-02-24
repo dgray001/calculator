@@ -18,6 +18,23 @@ func newInteger() Integer {
 	}
 }
 
+func constructInt(i int) Integer {
+	s := strconv.Itoa(i)
+	j := newInteger()
+	for _, sd := range s {
+		if sd == '-' {
+			j.int_sign = false
+			continue
+		}
+		s, e := strconv.Atoi(string(sd))
+		if e != nil {
+			panic("Non integer rune being used to construct int")
+		}
+		j = j.addDigit(uint8(s), false)
+	}
+	return j.construct()
+}
+
 func (i Integer) toString() string {
 	var return_string = ""
 	for _, digit := range i.digits {
@@ -247,4 +264,8 @@ func (i Integer) multiply(j Integer) Integer {
 		return_integer.int_sign = true
 	}
 	return return_integer
+}
+
+func (i Integer) toRational() RationalNumber {
+	return newRationalNumber(i, constructInt(1))
 }

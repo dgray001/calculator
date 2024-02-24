@@ -31,26 +31,49 @@ func unaryOperation(operator Token, value Value) (Value, error) {
 
 func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) {
 	switch operator {
+
 	case PLUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
 			return Value{}, errors.New("Cannot add node value types")
 		}
+		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
+			return rationalValue(value1.asRational().add(value2.asRational())), nil
+		}
 		return intValue(value1.integer.add(*value2.integer)), nil
+
 	case MINUS:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
 			return Value{}, errors.New("Cannot subtract node value types")
 		}
+		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
+			// TODO: implement
+			return Value{}, errors.New("Cannot subtract rationals yet")
+		}
 		return intValue(value1.integer.subtract(*value2.integer)), nil
+
 	case MULTIPLY:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
 			return Value{}, errors.New("Cannot multiply node value types")
 		}
+		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
+			// TODO: implement
+			return Value{}, errors.New("Cannot multiply rationals yet")
+		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
+
 	case DIVIDE:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
 			return Value{}, errors.New("Cannot divide node value types")
 		}
+		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
+			// TODO: implement
+			return Value{}, errors.New("Cannot divide rationals yet")
+		}
+		if value2.integer.isZero() {
+			return Value{}, errors.New("Cannot divide by zero")
+		}
 		return rationalValue(newRationalNumber(*value1.integer, *value2.integer)), nil
+
 	default:
 		return Value{}, errors.New("Invalid binary operator: " + operator.toString())
 	}

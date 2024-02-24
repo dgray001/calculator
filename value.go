@@ -59,6 +59,17 @@ func nodeValue(node AstNode) Value {
 	}
 }
 
+func (i Value) asRational() RationalNumber {
+	switch i.value_type {
+	case INTEGER:
+		return i.integer.toRational()
+	case RATIONAL_NUMBER:
+		return *i.rational
+	default:
+		panic("Cannot convert value to rational number")
+	}
+}
+
 func (i Value) equals(untyped interface{}) bool {
 	var j = untyped.(Value)
 	if i.value_type != j.value_type {

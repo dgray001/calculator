@@ -30,6 +30,26 @@ func TestIntegerEquals(t *testing.T) {
 	}
 }
 
+func TestConstructInt(t *testing.T) {
+	testCases := []struct {
+		i        int
+		expected string
+	}{
+		{0, "0"},
+		{-0, "0"},
+		{4, "4"},
+		{-4, "-4"},
+		{7019, "7019"},
+		{-7019, "-7019"},
+	}
+	for _, tc := range testCases {
+		var got = constructInt(tc.i)
+		if got.toString() != tc.expected {
+			t.Errorf("Test case constructing %d expected %s but received %s", tc.i, tc.expected, got.toString())
+		}
+	}
+}
+
 func TestConstruct(t *testing.T) {
 	testCases := []struct {
 		i        Integer

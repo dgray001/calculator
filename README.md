@@ -1,10 +1,9 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1c: RationalNumber unary operators
+v0.1d: Construct int
 
 Plans:
  - v0.2: Rational Numbers / Division
-   - RationalNumbers struct (two int structs)
    - Add / subtract rational numbers
    - Multiply rational numbers
    - Division token turns ints into rational numbers
