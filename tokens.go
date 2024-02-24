@@ -31,6 +31,7 @@ const (
 	INCREMENT
 	DECREMENT
 	ABSOLUTE
+	INVERT
 
 	// to loop over possible tokens
 	tokenLimit
@@ -92,7 +93,7 @@ func (token Token) isCloseParens() bool {
 }
 
 func (token Token) isFunction() bool {
-	if token >= INCREMENT && token <= ABSOLUTE {
+	if token >= INCREMENT && token <= INVERT {
 		return true
 	}
 	return false
@@ -169,6 +170,8 @@ func (token Token) toString() string {
 		return "dec"
 	case ABSOLUTE:
 		return "abs"
+	case INVERT:
+		return "inv"
 	default:
 		panic("Unrecognized token")
 	}

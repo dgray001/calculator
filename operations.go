@@ -81,6 +81,7 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 
 func evaluateFunction(function Token, value Value) (Value, error) {
 	switch function {
+
 	case INCREMENT:
 		switch value.value_type {
 		case INTEGER:
@@ -90,6 +91,7 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		default:
 			return Value{}, errors.New("Invalid value type for increment function: " + value.value_type.toString())
 		}
+
 	case DECREMENT:
 		switch value.value_type {
 		case INTEGER:
@@ -99,6 +101,7 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		default:
 			return Value{}, errors.New("Invalid value type for decrement function: " + value.value_type.toString())
 		}
+
 	case ABSOLUTE:
 		switch value.value_type {
 		case INTEGER:
@@ -108,6 +111,17 @@ func evaluateFunction(function Token, value Value) (Value, error) {
 		default:
 			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
 		}
+
+	case INVERT:
+		switch value.value_type {
+		case INTEGER:
+			return intValue(value.integer.invert()), nil
+		case RATIONAL_NUMBER:
+			return rationalValue(value.rational.invert()), nil
+		default:
+			return Value{}, errors.New("Invalid value type for absolute value function: " + value.value_type.toString())
+		}
+
 	default:
 		return Value{}, errors.New("Invalid function: " + function.toString())
 	}

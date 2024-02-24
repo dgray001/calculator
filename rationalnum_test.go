@@ -63,3 +63,61 @@ func TestAbs(t *testing.T) {
 		}
 	}
 }
+
+func TestInc(t *testing.T) {
+	type TestCase struct {
+		initial  RationalNumber
+		expected RationalNumber
+	}
+	var testCases = []TestCase{
+		{initial: constructRationalNumber(12, 5), expected: constructRationalNumber(17, 5)},
+		{initial: constructRationalNumber(-12, 5), expected: constructRationalNumber(-7, 5)},
+		{initial: constructRationalNumber(12, -5), expected: constructRationalNumber(-7, 5)},
+		{initial: constructRationalNumber(-12, -5), expected: constructRationalNumber(17, 5)},
+	}
+	for _, tc := range testCases {
+		got := tc.initial.increment()
+		if !got.equals(tc.expected) {
+			t.Errorf("For test case taking inc of %s, got %s", tc.initial.toString(), got.toString())
+		}
+	}
+}
+
+func TestDec(t *testing.T) {
+	type TestCase struct {
+		initial  RationalNumber
+		expected RationalNumber
+	}
+	var testCases = []TestCase{
+		{initial: constructRationalNumber(12, 5), expected: constructRationalNumber(7, 5)},
+		{initial: constructRationalNumber(-12, 5), expected: constructRationalNumber(-17, 5)},
+		{initial: constructRationalNumber(12, -5), expected: constructRationalNumber(-17, 5)},
+		{initial: constructRationalNumber(-12, -5), expected: constructRationalNumber(7, 5)},
+	}
+	for _, tc := range testCases {
+		got := tc.initial.decrement()
+		if !got.equals(tc.expected) {
+			t.Errorf("For test case taking dec of %s, got %s", tc.initial.toString(), got.toString())
+		}
+	}
+}
+
+func TestIsZero(t *testing.T) {
+	type TestCase struct {
+		initial  RationalNumber
+		expected bool
+	}
+	var testCases = []TestCase{
+		{initial: constructRationalNumber(0, 5), expected: true},
+		{initial: constructRationalNumber(0, -1), expected: true},
+		{initial: constructRationalNumber(1, 1), expected: false},
+		{initial: constructRationalNumber(-1, 1), expected: false},
+		{initial: constructRationalNumber(1, 9999), expected: false},
+	}
+	for _, tc := range testCases {
+		got := tc.initial.isZero()
+		if got != tc.expected {
+			t.Errorf("For test case checking isZero of %s, got %t", tc.initial.toString(), got)
+		}
+	}
+}

@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1e: Rational invertion and abs
+v0.1f: Rational inc, dec, and isZero
 
 Plans:
  - v0.2: Rational Numbers / Division
