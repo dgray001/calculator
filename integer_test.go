@@ -396,6 +396,7 @@ func TestLongDivision(t *testing.T) {
 		q int
 		r int
 	}{
+		{x: 3, y: 1, q: 3, r: 0},
 		{x: 11, y: 7, q: 1, r: 4},
 		{x: -11, y: 7, q: -1, r: -4},
 		{x: 11, y: -7, q: -1, r: 4},
@@ -405,8 +406,8 @@ func TestLongDivision(t *testing.T) {
 		{x: 27, y: -5, q: -5, r: 2},
 		{x: -27, y: -5, q: 5, r: -2},
 		{x: 3, y: 8, q: 0, r: 3},
-		{x: -3, y: 8, q: -0, r: -3},
-		{x: 3, y: -8, q: -0, r: 3},
+		{x: -3, y: 8, q: 0, r: -3},
+		{x: 3, y: -8, q: 0, r: 3},
 		{x: -3, y: -8, q: 0, r: -3},
 	}
 	for _, tc := range testCases {

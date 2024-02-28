@@ -90,7 +90,19 @@ func (i Value) equals(untyped interface{}) bool {
 }
 
 func (i Value) simplify() Value {
-	return i
+	switch i.value_type {
+	case RATIONAL_NUMBER:
+		i.rational.numerator.int_sign = i.rational.rational_sign
+		q, r := i.rational.numerator.longDivision(i.rational.denominator)
+		if r.isZero() {
+			return intValue(q)
+		}
+		// TODO: simplify rational
+		i.rational.numerator.int_sign = true
+		return i
+	default:
+		return i
+	}
 }
 
 func (value Value) toString(shallow bool) string {

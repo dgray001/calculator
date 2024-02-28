@@ -34,7 +34,8 @@ func (node *AstNode) evaluate() (Value, error) {
 	if node.function != nil {
 		return evaluateFunction(*node.function, node.values[0])
 	}
-	return node.values[0], nil
+	// simplify and return result
+	return node.values[0].simplify(), nil
 }
 
 func (node *AstNode) evaluatePass(start Token, end Token) error {
@@ -82,7 +83,9 @@ func (node *AstNode) evaluatePass(start Token, end Token) error {
 func (value *Value) evaluate() (Value, error) {
 	switch value.value_type {
 	case INTEGER:
-		return *value, nil
+		return value.simplify(), nil
+	case RATIONAL_NUMBER:
+		return value.simplify(), nil
 	case AST_NODE:
 		return value.ast_node.evaluate()
 	default:

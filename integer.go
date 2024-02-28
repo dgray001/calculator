@@ -193,7 +193,7 @@ func (i Integer) longDivision(j Integer) (Integer, Integer) {
 	ic.int_sign = true
 	jc.int_sign = true
 	quotient := constructInt(0)
-	for ic.compare(jc) == GREATER_THAN {
+	for ic.compare(jc) != LESSER_THAN {
 		quotient = quotient.add(constructInt(1))
 		ic = ic.subtract(jc)
 	}

@@ -11,7 +11,7 @@ func newRationalNumber(i Integer, j Integer) RationalNumber {
 	if j.isZero() {
 		panic("Creating rational number with 0 as denominator")
 	}
-	var rational_sign = i.int_sign == j.int_sign
+	rational_sign := i.int_sign == j.int_sign
 	i.int_sign = true
 	j.int_sign = true
 	return RationalNumber{
@@ -68,6 +68,10 @@ func (i RationalNumber) increment() RationalNumber {
 		i.numerator = i.numerator.add(i.denominator)
 	} else {
 		i.numerator = i.numerator.subtract(i.denominator)
+		if !i.numerator.int_sign {
+			i.rational_sign = true
+			i.numerator.int_sign = true
+		}
 	}
 	return i
 }
@@ -75,6 +79,10 @@ func (i RationalNumber) increment() RationalNumber {
 func (i RationalNumber) decrement() RationalNumber {
 	if i.rational_sign {
 		i.numerator = i.numerator.subtract(i.denominator)
+		if !i.numerator.int_sign {
+			i.rational_sign = false
+			i.numerator.int_sign = true
+		}
 	} else {
 		i.numerator = i.numerator.add(i.denominator)
 	}

@@ -1,6 +1,6 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1j: Implement long division
+v0.1k: Convert rational to int
 
 Plans:
  - v0.2: Rational Numbers / Division

@@ -42,7 +42,11 @@ func TestSimplify(t *testing.T) {
 		expected string
 	}
 	var testCases = []TestCase{
-		{initial: rationalValue(constructRationalNumber(3, 1)), expected: "3/1"},
+		{initial: rationalValue(constructRationalNumber(3, 1)), expected: "3"},
+		{initial: rationalValue(constructRationalNumber(-3, 1)), expected: "-3"},
+		{initial: rationalValue(constructRationalNumber(3, -1)), expected: "-3"},
+		{initial: rationalValue(constructRationalNumber(-3, -1)), expected: "3"},
+		{initial: rationalValue(constructRationalNumber(-12, 8)), expected: "-3/2"},
 	}
 	for _, tc := range testCases {
 		got := tc.initial.simplify()

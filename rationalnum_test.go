@@ -74,6 +74,8 @@ func TestInc(t *testing.T) {
 		{initial: constructRationalNumber(-12, 5), expected: constructRationalNumber(-7, 5)},
 		{initial: constructRationalNumber(12, -5), expected: constructRationalNumber(-7, 5)},
 		{initial: constructRationalNumber(-12, -5), expected: constructRationalNumber(17, 5)},
+		{initial: constructRationalNumber(1, 3), expected: constructRationalNumber(4, 3)},
+		{initial: constructRationalNumber(-1, 3), expected: constructRationalNumber(2, 3)},
 	}
 	for _, tc := range testCases {
 		got := tc.initial.increment()
@@ -93,6 +95,8 @@ func TestDec(t *testing.T) {
 		{initial: constructRationalNumber(-12, 5), expected: constructRationalNumber(-17, 5)},
 		{initial: constructRationalNumber(12, -5), expected: constructRationalNumber(-17, 5)},
 		{initial: constructRationalNumber(-12, -5), expected: constructRationalNumber(7, 5)},
+		{initial: constructRationalNumber(1, 3), expected: constructRationalNumber(-2, 3)},
+		{initial: constructRationalNumber(-1, 3), expected: constructRationalNumber(-4, 3)},
 	}
 	for _, tc := range testCases {
 		got := tc.initial.decrement()
