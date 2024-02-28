@@ -89,6 +89,10 @@ func (i Value) equals(untyped interface{}) bool {
 	}
 }
 
+func (i Value) simplify() Value {
+	return i
+}
+
 func (value Value) toString(shallow bool) string {
 	var return_string strings.Builder
 	return_string.WriteString("Value {")

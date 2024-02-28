@@ -35,3 +35,19 @@ func TestValueEquals(t *testing.T) {
 		}
 	}
 }
+
+func TestSimplify(t *testing.T) {
+	type TestCase struct {
+		initial  Value
+		expected string
+	}
+	var testCases = []TestCase{
+		{initial: rationalValue(constructRationalNumber(3, 1)), expected: "3/1"},
+	}
+	for _, tc := range testCases {
+		got := tc.initial.simplify()
+		if got.toResultString() != tc.expected {
+			t.Errorf("For test case simplifying %s, got %s", tc.initial.toResultString(), got.toResultString())
+		}
+	}
+}

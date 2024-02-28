@@ -19,6 +19,7 @@ const (
 	PLUS
 	MINUS
 	MULTIPLY
+	INT_DIVIDE
 	DIVIDE
 
 	// parentheses
@@ -69,13 +70,6 @@ func (token Token) isUnaryOperator() bool {
 
 func (token Token) isBinaryOperator() bool {
 	return token.isOperator()
-}
-
-func (token Token) isParentheses() bool {
-	if token >= OPEN_PAREN && token <= CLOSE_BRACKET {
-		return true
-	}
-	return false
 }
 
 func (token Token) isOpenParens() bool {
@@ -154,6 +148,8 @@ func (token Token) toString() string {
 		return "-"
 	case MULTIPLY:
 		return "*"
+	case INT_DIVIDE:
+		return "//"
 	case DIVIDE:
 		return "/"
 	case OPEN_PAREN:

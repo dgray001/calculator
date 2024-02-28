@@ -30,6 +30,23 @@ func TestIntegerEquals(t *testing.T) {
 	}
 }
 
+func TestIntegerToString(t *testing.T) {
+	testCases := []struct {
+		i        Integer
+		expected string
+	}{
+		{constructInt(0), "0"},
+		{constructInt(11), "11"},
+		{constructInt(-11), "-11"},
+	}
+	for _, tc := range testCases {
+		got := tc.i.toString()
+		if got != tc.expected {
+			t.Errorf("When converting int to string got %s, expected %s", got, tc.expected)
+		}
+	}
+}
+
 func TestConstructInt(t *testing.T) {
 	testCases := []struct {
 		i        int
@@ -369,5 +386,40 @@ func TestMultiplyPanic(t *testing.T) {
 			}
 		}()
 		tc.left.multiply(tc.right)
+	}
+}
+
+func TestLongDivision(t *testing.T) {
+	testCases := []struct {
+		x int
+		y int
+		q int
+		r int
+	}{
+		{x: 11, y: 7, q: 1, r: 4},
+		{x: -11, y: 7, q: -1, r: -4},
+		{x: 11, y: -7, q: -1, r: 4},
+		{x: -11, y: -7, q: 1, r: -4},
+		{x: 27, y: 5, q: 5, r: 2},
+		{x: -27, y: 5, q: -5, r: -2},
+		{x: 27, y: -5, q: -5, r: 2},
+		{x: -27, y: -5, q: 5, r: -2},
+		{x: 3, y: 8, q: 0, r: 3},
+		{x: -3, y: 8, q: -0, r: -3},
+		{x: 3, y: -8, q: -0, r: 3},
+		{x: -3, y: -8, q: 0, r: -3},
+	}
+	for _, tc := range testCases {
+		dividend := constructInt(tc.x)
+		divisor := constructInt(tc.y)
+		quotient := constructInt(tc.q)
+		remainder := constructInt(tc.r)
+		var got1, got2 = dividend.longDivision(divisor)
+		if !got1.equals(quotient) {
+			t.Errorf("Test case long dividing %s and %s got quotient %s", dividend.toString(), divisor.toString(), got1.toString())
+		}
+		if !got2.equals(remainder) {
+			t.Errorf("Test case long dividing %s and %s got remainder %s", dividend.toString(), divisor.toString(), got2.toString())
+		}
 	}
 }

@@ -13,8 +13,18 @@ type Integer struct {
 func newInteger() Integer {
 	return Integer{
 		int_sign:    true,
-		digits:      []uint8{},
+		digits:      make([]uint8, 0),
 		constructed: false,
+	}
+}
+
+func copyInt(i Integer) Integer {
+	digits := make([]uint8, len(i.digits))
+	copy(digits, i.digits)
+	return Integer{
+		int_sign:    i.int_sign,
+		digits:      digits,
+		constructed: i.constructed,
 	}
 }
 
@@ -102,13 +112,15 @@ func (i Integer) construct() Integer {
 }
 
 func (i Integer) invert() Integer {
-	i.int_sign = !i.int_sign
-	return i
+	ic := copyInt(i)
+	ic.int_sign = !ic.int_sign
+	return ic
 }
 
 func (i Integer) abs() Integer {
-	i.int_sign = true
-	return i
+	ic := copyInt(i)
+	ic.int_sign = true
+	return ic
 }
 
 func (i Integer) increment() Integer {
@@ -161,23 +173,54 @@ func (i Integer) compare(j Integer) CompareResult {
 	return compare_result
 }
 
+/*
+For reference:
+https://math.stackexchange.com/questions/623449/negative-number-divided-by-positive-number-what-would-be-remainder and
+https://ericlippert.com/2013/10/31/math-from-scratch-part-eleven-integer-division/
+So following the second reference, we have:
+i / j = q + r / j so that i = j * q + r
+(-i) / j == i / (-j) == -(i / j)
+so once we have quotient we can calculate remainder by:
+r = i - j * q
+*/
+func (i Integer) longDivision(j Integer) (Integer, Integer) {
+	if j.isZero() {
+		panic("Divide by zero error")
+	}
+	ic := copyInt(i)
+	jc := copyInt(j)
+	end_sign := ic.int_sign == jc.int_sign
+	ic.int_sign = true
+	jc.int_sign = true
+	quotient := constructInt(0)
+	for ic.compare(jc) == GREATER_THAN {
+		quotient = quotient.add(constructInt(1))
+		ic = ic.subtract(jc)
+	}
+	if !quotient.isZero() {
+		quotient.int_sign = end_sign
+	}
+	if !ic.isZero() {
+		ic.int_sign = i.int_sign
+	}
+	return quotient, ic
+}
+
 func (i Integer) add(j Integer) Integer {
 	if !i.constructed || !j.constructed {
 		panic("Cannot add unconstructed integers")
 	}
-	var return_integer = newInteger()
-	var subtraction = false
+	return_integer := newInteger()
+	subtraction := false
 	if !i.int_sign && !j.int_sign {
 		return_integer.int_sign = false
-	} else if !i.int_sign {
-		subtraction = true
-	} else if !j.int_sign {
+	} else if !i.int_sign || !j.int_sign {
 		subtraction = true
 	}
 
 	if subtraction {
-		var abs_compare = i.abs().compare(j.abs())
-		var switch_operands = false
+		abs_compare := i.abs().compare(j.abs())
+		switch_operands := false
 		switch abs_compare {
 		case EQUAL_TO:
 			return return_integer.construct()
@@ -193,11 +236,11 @@ func (i Integer) add(j Integer) Integer {
 		var minuend Integer
 		var subtrahend Integer
 		if switch_operands {
-			minuend = j
-			subtrahend = i
+			minuend = copyInt(j)
+			subtrahend = copyInt(i)
 		} else {
-			minuend = i
-			subtrahend = j
+			minuend = copyInt(i)
+			subtrahend = copyInt(j)
 		}
 		for place := 0; place < len(minuend.digits); place++ {
 			var minuend_v = minuend.digits[len(minuend.digits)-1-place]
@@ -232,8 +275,7 @@ func (i Integer) add(j Integer) Integer {
 }
 
 func (i Integer) subtract(j Integer) Integer {
-	j.int_sign = !j.int_sign
-	return i.add(j)
+	return i.add(j.invert())
 }
 
 func (i Integer) multiply(j Integer) Integer {

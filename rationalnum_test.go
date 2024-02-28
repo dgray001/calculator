@@ -196,7 +196,7 @@ func TestMultiplyRational(t *testing.T) {
 	for _, tc := range testCases {
 		got := tc.i.multiply(tc.j)
 		if got.toString() != tc.expected {
-			t.Errorf("For test case subtracting %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+			t.Errorf("For test case multiplying %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
 		}
 	}
 }
@@ -218,7 +218,7 @@ func TestDivideRational(t *testing.T) {
 	for _, tc := range testCases {
 		got := tc.i.divide(tc.j)
 		if got.toString() != tc.expected {
-			t.Errorf("For test case subtracting %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+			t.Errorf("For test case dividing %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
 		}
 	}
 }
