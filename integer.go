@@ -206,6 +206,36 @@ func (i Integer) longDivision(j Integer) (Integer, Integer) {
 	return quotient, ic
 }
 
+// Trial division which is simple but not efficient: https://en.wikipedia.org/wiki/Trial_division
+func (i Integer) factor() []Integer {
+	factors := make([]Integer, 0)
+	ic := copyInt(i)
+	if !ic.int_sign {
+		ic.int_sign = true
+		factors = append(factors, constructInt(-1))
+	}
+	for {
+		q, r := ic.longDivision(constructInt(2))
+		if r.isZero() {
+			factors = append(factors, constructInt(2))
+			ic = q
+		} else {
+			break
+		}
+	}
+	f := constructInt(3)
+	for f.multiply(copyInt(f)).compare(ic) != GREATER_THAN {
+		q, r := ic.longDivision(f)
+		if r.isZero() {
+			factors = append(factors, f)
+			ic = q
+		} else {
+			f.add(constructInt(2))
+		}
+	}
+	return factors
+}
+
 func (i Integer) add(j Integer) Integer {
 	if !i.constructed || !j.constructed {
 		panic("Cannot add unconstructed integers")

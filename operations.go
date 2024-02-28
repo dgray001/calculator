@@ -59,6 +59,16 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
 
+	case INT_DIVIDE:
+		if value1.value_type != INTEGER || value2.value_type != INTEGER {
+			return Value{}, errors.New("can only int divide int value types")
+		}
+		if value2.integer.isZero() {
+			return Value{}, errors.New("cannot divide by zero")
+		}
+		q, _ := value1.integer.longDivision(*value2.integer)
+		return intValue(q), nil
+
 	case DIVIDE:
 		if value1.value_type == AST_NODE || value2.value_type == AST_NODE {
 			return Value{}, errors.New("cannot divide node value types")

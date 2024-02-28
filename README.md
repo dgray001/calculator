@@ -1,10 +1,10 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1k: Convert rational to int
+v0.1l: Integer division operator
 
 Plans:
  - v0.2: Rational Numbers / Division
-   - Rational numbers auto-simplify => can turn into an int
+   - Rational numbers auto-simplify
    - Factorial operator
  - v0.3: Irrational Numbers / Roots
  - v0.4: Limits

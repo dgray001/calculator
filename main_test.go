@@ -43,6 +43,10 @@ func Test(t *testing.T) {
 		{input: "-(2/3)", expected: "-2/3"},
 		{input: "(12/5) / (3/5)", expected: "4"},
 		{input: "(-12/5) / (3/5)", expected: "-4"},
+		{input: "12 // 5", expected: "2"},
+		{input: "12 // (-5)", expected: "-2"},
+		{input: "(-12) // 5", expected: "-2"},
+		{input: "(-12) // (-5)", expected: "2"},
 		// Functions
 		{input: "i n c 1", expected: "2"},
 		{input: "2 - inc(23)", expected: "-22"},

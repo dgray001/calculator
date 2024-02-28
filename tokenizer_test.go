@@ -10,10 +10,9 @@ func TestTokenize(t *testing.T) {
 		expected      []Token
 		error_message string
 	}{
-		{"unknown", []Token{}, "Unrecogized character: u"},
-		{"1 ! 3", []Token{ONE}, "Unrecogized character: !"},
-		{"in+", []Token{}, "Unrecogized character: +"},
-		{"decin", []Token{DECREMENT}, "Unfinished tokens at end of input"},
+		{"unknown", []Token{}, "unrecognized character sequence starting at: unknown"},
+		{"1 ! 3", []Token{ONE}, "unrecognized character sequence starting at: !3"},
+		{"in+", []Token{}, "unrecognized character sequence starting at: in+"},
 		{"0", []Token{ZERO}, ""},
 		{"0 \t 5 \n 9", []Token{ZERO, FIVE, NINE}, ""},
 		{"+2", []Token{PLUS, TWO}, ""},

@@ -16,6 +16,15 @@ func arrayEquals[T canEqual](a []T, b []T) bool {
 	return true
 }
 
+func arrayFilter[T any](ss []T, test func(T) bool) (ret []T) {
+	for _, s := range ss {
+		if test(s) {
+			ret = append(ret, s)
+		}
+	}
+	return
+}
+
 func takePtr[T any](v T) *T {
 	return &v
 }
