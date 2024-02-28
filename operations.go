@@ -55,8 +55,7 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 			return Value{}, errors.New("cannot multiply node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
-			// TODO: implement
-			return Value{}, errors.New("cannot multiply rationals yet")
+			return rationalValue(value1.asRational().multiply(value2.asRational())), nil
 		}
 		return intValue(value1.integer.multiply(*value2.integer)), nil
 
@@ -65,8 +64,7 @@ func binaryOperation(operator Token, value1 Value, value2 Value) (Value, error) 
 			return Value{}, errors.New("cannot divide node value types")
 		}
 		if value1.value_type == RATIONAL_NUMBER || value2.value_type == RATIONAL_NUMBER {
-			// TODO: implement
-			return Value{}, errors.New("cannot divide rationals yet")
+			return rationalValue(value1.asRational().divide(value2.asRational())), nil
 		}
 		if value2.integer.isZero() {
 			return Value{}, errors.New("cannot divide by zero")

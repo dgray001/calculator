@@ -1,12 +1,9 @@
 Calculator pet project to learn the Go language and sharpen basic interpreter skills (tokenize, parse, evaluate)
 
-v0.1h: Rational add and subtract
+v0.1i: Multiply and divide rational numbers
 
 Plans:
  - v0.2: Rational Numbers / Division
-   - Add / subtract rational numbers
-   - Multiply rational numbers
-   - Division token turns ints into rational numbers
    - Rational numbers auto-simplify => can turn into an int
    - Factorial operator
  - v0.3: Irrational Numbers / Roots

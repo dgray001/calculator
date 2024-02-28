@@ -21,6 +21,8 @@ func Test(t *testing.T) {
 		{input: "12/5 + 3/5", expected: "75/25"},
 		{input: "-(12/5) + 3/(-5)", expected: "-75/25"},
 		{input: "12/5 + (-3/5)", expected: "45/25"},
+		{input: "12/5 - 3/5", expected: "45/25"},
+		{input: "-12/5 - 3/5", expected: "-75/25"},
 		// Multiplication
 		{input: "2*2", expected: "4"},
 		{input: "5 * (-1)", expected: "-5"},
@@ -32,13 +34,15 @@ func Test(t *testing.T) {
 		{input: "3*(2-1)", expected: "3"},
 		{input: "13*12", expected: "156"},
 		{input: "2 * (3 - 6) * (-1)", expected: "6"},
-		{input: "12/5 - 3/5", expected: "45/25"},
-		{input: "-12/5 - 3/5", expected: "-75/25"},
+		{input: "(12/5) * (3/5)", expected: "36/25"},
+		{input: "(-12/5) * (3/5)", expected: "-36/25"},
 		// Division
 		{input: "2 / 3", expected: "2/3"},
 		{input: "3 * 6 / 5", expected: "18/5"},
 		{input: "+(2/3)", expected: "2/3"},
 		{input: "-(2/3)", expected: "-2/3"},
+		{input: "(12/5) / (3/5)", expected: "60/15"},
+		{input: "(-12/5) / (3/5)", expected: "-60/15"},
 		// Functions
 		{input: "i n c 1", expected: "2"},
 		{input: "2 - inc(23)", expected: "-22"},

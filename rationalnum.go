@@ -116,3 +116,21 @@ func (i RationalNumber) subtract(j RationalNumber) RationalNumber {
 	bd := i.denominator.multiply(j.denominator)
 	return newRationalNumber(ad.subtract(bc), bd)
 }
+
+func (i RationalNumber) multiply(j RationalNumber) RationalNumber {
+	// a/b * c/d = ac / bd
+	i.numerator.int_sign = i.rational_sign
+	j.numerator.int_sign = j.rational_sign
+	ac := i.numerator.multiply(j.numerator)
+	bd := i.denominator.multiply(j.denominator)
+	return newRationalNumber(ac, bd)
+}
+
+func (i RationalNumber) divide(j RationalNumber) RationalNumber {
+	// a/b / c/d = ad / bc
+	i.numerator.int_sign = i.rational_sign
+	j.denominator.int_sign = j.rational_sign
+	ac := i.numerator.multiply(j.denominator)
+	bd := i.denominator.multiply(j.numerator)
+	return newRationalNumber(ac, bd)
+}

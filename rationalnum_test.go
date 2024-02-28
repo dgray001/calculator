@@ -178,3 +178,47 @@ func TestSubtractRational(t *testing.T) {
 		}
 	}
 }
+
+func TestMultiplyRational(t *testing.T) {
+	type TestCase struct {
+		i        RationalNumber
+		j        RationalNumber
+		expected string
+	}
+	var testCases = []TestCase{
+		{i: constructRationalNumber(2, 1), j: constructRationalNumber(3, 1), expected: "6/1"},
+		{i: constructRationalNumber(-2, 1), j: constructRationalNumber(3, 1), expected: "-6/1"},
+		{i: constructRationalNumber(2, 1), j: constructRationalNumber(3, -1), expected: "-6/1"},
+		{i: constructRationalNumber(2, -1), j: constructRationalNumber(-3, 1), expected: "6/1"},
+		{i: constructRationalNumber(3, 5), j: constructRationalNumber(12, 5), expected: "36/25"},
+		{i: constructRationalNumber(1, 3), j: constructRationalNumber(2, -5), expected: "-2/15"},
+	}
+	for _, tc := range testCases {
+		got := tc.i.multiply(tc.j)
+		if got.toString() != tc.expected {
+			t.Errorf("For test case subtracting %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+		}
+	}
+}
+
+func TestDivideRational(t *testing.T) {
+	type TestCase struct {
+		i        RationalNumber
+		j        RationalNumber
+		expected string
+	}
+	var testCases = []TestCase{
+		{i: constructRationalNumber(2, 1), j: constructRationalNumber(3, 1), expected: "2/3"},
+		{i: constructRationalNumber(-2, 1), j: constructRationalNumber(3, 1), expected: "-2/3"},
+		{i: constructRationalNumber(2, 1), j: constructRationalNumber(3, -1), expected: "-2/3"},
+		{i: constructRationalNumber(2, -1), j: constructRationalNumber(-3, 1), expected: "2/3"},
+		{i: constructRationalNumber(3, 5), j: constructRationalNumber(12, 5), expected: "15/60"},
+		{i: constructRationalNumber(1, 3), j: constructRationalNumber(2, -5), expected: "-5/6"},
+	}
+	for _, tc := range testCases {
+		got := tc.i.divide(tc.j)
+		if got.toString() != tc.expected {
+			t.Errorf("For test case subtracting %s and %s, got %s", tc.i.toString(), tc.j.toString(), got.toString())
+		}
+	}
+}
